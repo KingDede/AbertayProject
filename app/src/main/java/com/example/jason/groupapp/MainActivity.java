@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -48,9 +49,28 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        TileView tileView = (TileView)findViewById(R.id.view);
-        tileView.setSize(2000, 1466);  // the original size of the untiled image
-        tileView.addDetailLevel(1f, "tile-%d-%d.png");
+        final TileView tileView = (TileView)findViewById(R.id.view);
+
+        ImageButton buttonUp = (ImageButton)findViewById(R.id.buttonUp);
+        buttonUp.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                tileView.addDetailLevel(1f, "abertaylevel2/%d-%d.png", 485, 350);
+            }
+        });
+
+        ImageButton buttonDown = (ImageButton)findViewById(R.id.buttonDown);
+        buttonDown.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            }
+        });
+
+        
+        //TileView tileView = new TileView( this );
+
+        tileView.setSize(2915, 2100);  // the original size of the untiled image
+        tileView.addDetailLevel(1f, "abertaylevel1/%d-%d.png", 485, 350);
         //setContentView(tileView);
         tileView.defineBounds(0, 0, 1, 1);
 

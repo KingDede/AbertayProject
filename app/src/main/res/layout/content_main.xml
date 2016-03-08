@@ -15,11 +15,30 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="Hello World!"
+        android:id="@+id/textView2" />
 
     <com.qozix.tileview.TileView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/view"
         android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonDown"
+        android:src="@android:drawable/arrow_down_float"
+        android:longClickable="true"
+        android:layout_below="@+id/buttonUp"
+        android:layout_alignParentEnd="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonUp"
+        android:src="@android:drawable/arrow_up_float"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="163dp" />
 </RelativeLayout>
