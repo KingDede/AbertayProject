@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity
                     InputMethodManager imm = (InputMethodManager) getSystemService(
                             INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                    
+
 
                     ImageView imageView = new ImageView(getApplicationContext());
                     imageView.setImageResource(R.drawable.blue_empty);
