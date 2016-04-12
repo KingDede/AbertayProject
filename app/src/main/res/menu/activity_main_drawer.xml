@@ -1,23 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_item1"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Test Item 1" />
-        <item
-            android:id="@+id/nav_item2"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Test Item 2" />
-        <item
-            android:id="@+id/nav_item3"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Test item 3" />
-        <item
-            android:id="@+id/nav_item4"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Test Item 4" />
-    </group>
+    <item android:title="Floor levels">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_item1"
+                    android:icon="@android:drawable/ic_dialog_map"
+                    android:title="Level 1" />
+                <item
+                    android:id="@+id/nav_item2"
+                    android:icon="@android:drawable/ic_dialog_map"
+                    android:title="Level 2" />
+                <item
+                    android:id="@+id/nav_item3"
+                    android:icon="@android:drawable/ic_dialog_map"
+                    android:title="Level 3" />
+                <item
+                    android:id="@+id/nav_item4"
+                    android:icon="@android:drawable/ic_dialog_map"
+                    android:title="Level 4" />
+                <item
+                    android:id="@+id/nav_item5"
+                    android:icon="@android:drawable/ic_dialog_map"
+                    android:title="Level 5" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/nav_item_sync"
+        android:icon="@android:drawable/ic_menu_my_calendar"
+        android:title="Add your timetable" />
 
 </menu>

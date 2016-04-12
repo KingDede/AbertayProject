@@ -1,5 +1,6 @@
 package com.example.jason.groupapp;
 
+import android.content.Intent;
 import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -30,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jason.groupapp.timetable.TimetableActivity;
 import com.qozix.tileview.TileView;
 import com.qozix.tileview.paths.CompositePathView;
 
@@ -39,51 +41,94 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
+    private TileView tileView1;
+    private TileView tileView2;
+    private TileView tileView3;
+    private TileView tileView4;
+    private TileView tileView5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        /* ==========================================
+         *      Creation
+         * ==========================================
+         */
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /* ==========================================
+         *      Initialisation of basic controls
+         * ==========================================
+         */
+        // ---------- Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        // ---------- FloatingActionButton
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
+        // ---------- Navigation drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        final TileView tileView1 = (TileView)findViewById(R.id.view1);
-        final TileView tileView2 = (TileView)findViewById(R.id.view2);
-        final TileView tileView3 = (TileView)findViewById(R.id.view3);
-        final TileView tileView4 = (TileView)findViewById(R.id.view4);
-        final TileView tileView5 = (TileView)findViewById(R.id.view5);
+        /* ==========================================
+         *      Image set-up
+         * ==========================================
+         */
+        // ---------- Creation
+        tileView1 = (TileView)findViewById(R.id.view1);
+        tileView2 = (TileView)findViewById(R.id.view2);
+        tileView3 = (TileView)findViewById(R.id.view3);
+        tileView4 = (TileView)findViewById(R.id.view4);
+        tileView5 = (TileView)findViewById(R.id.view5);
+        // ---------- Settings
+        //Set the size of the original image
+        tileView1.setSize(2915, 2100);
+        tileView2.setSize(2915, 2100);
+        tileView3.setSize(2915, 2100);
+        tileView4.setSize(2915, 2100);
+        tileView5.setSize(2915, 2100);
+        //assign the tile sets to appropriate tileview
+        tileView1.addDetailLevel(1f, "abertaylevel1/%d-%d.png", 485, 350);
+        tileView2.addDetailLevel(1f, "abertaylevel2/%d-%d.png", 485, 350);
+        tileView3.addDetailLevel(1f, "abertaylevel3/%d-%d.png", 485, 350);
+        tileView4.addDetailLevel(1f, "abertaylevel4/%d-%d.png", 485, 350);
+        tileView5.addDetailLevel(1f, "abertaylevel5/%d-%d.png", 485, 350);
+        //Set the bounds for each tileview for placing the paths/markers
+        tileView1.defineBounds(0, 0, 2915, 2100);
+        tileView2.defineBounds(0, 0, 2915, 2100);
+        tileView3.defineBounds(0, 0, 2915, 2100);
+        tileView4.defineBounds(0, 0, 2915, 2100);
+        tileView5.defineBounds(0, 0, 2915, 2100);
+        // ---------- End of image set-up
 
-        Button btnLevel1 = (Button) findViewById(R.id.button);
-        Button btnLevel2 = (Button) findViewById(R.id.button2);
-        Button btnLevel3 = (Button) findViewById(R.id.button3);
-        Button btnLevel4 = (Button) findViewById(R.id.button4);
-        Button btnLevel5 = (Button) findViewById(R.id.button5);
 
+        /* ==========================================
+         *      Nodes set-up
+         * ==========================================
+         */
         NodePath nPath = new NodePath(this.getApplicationContext());
         List<String> rooms = nPath.getAllRooms();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.select_dialog_singlechoice, rooms);
 
+        /* ==========================================
+         *      Auto complete panel set-up
+         * ==========================================
+         */
+        // ---------- Creation
         final AutoCompleteTextView textStart = (AutoCompleteTextView) findViewById(R.id.textStart);
         final AutoCompleteTextView textEnd = (AutoCompleteTextView) findViewById(R.id.textEnd);
-
+        // ---------- Initialisation
         textStart.setThreshold(1);
         textEnd.setThreshold(1);
         textStart.setAdapter(adapter);
         textEnd.setAdapter(adapter);
-
+        // ---------- Launch ( with floating action button )
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,7 +140,7 @@ public class MainActivity extends AppCompatActivity
                 textEnd.setVisibility(View.GONE);
             }
         });
-
+        // ---------- Reaction ( with text editor listener )
         textStart.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -108,7 +153,6 @@ public class MainActivity extends AppCompatActivity
                 return false;
             }
         });
-
         textEnd.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -135,88 +179,13 @@ public class MainActivity extends AppCompatActivity
                 return false;
             }
         });
-
-        btnLevel1.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-                tileView1.setVisibility(View.VISIBLE);
-                tileView2.setVisibility(View.GONE);
-                tileView3.setVisibility(View.GONE);
-                tileView4.setVisibility(View.GONE);
-                tileView5.setVisibility(View.GONE);
-            }
-        });
-
-        btnLevel2.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-                tileView1.setVisibility(View.GONE);
-                tileView2.setVisibility(View.VISIBLE);
-                tileView3.setVisibility(View.GONE);
-                tileView4.setVisibility(View.GONE);
-                tileView5.setVisibility(View.GONE);
-            }
-        });
-
-        btnLevel3.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-                tileView1.setVisibility(View.GONE);
-                tileView2.setVisibility(View.GONE);
-                tileView3.setVisibility(View.VISIBLE);
-                tileView4.setVisibility(View.GONE);
-                tileView5.setVisibility(View.GONE);
-            }
-        });
-
-        btnLevel4.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-                tileView1.setVisibility(View.GONE);
-                tileView2.setVisibility(View.GONE);
-                tileView3.setVisibility(View.GONE);
-                tileView4.setVisibility(View.VISIBLE);
-                tileView5.setVisibility(View.GONE);
-            }
-        });
-
-        btnLevel5.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-                tileView1.setVisibility(View.GONE);
-                tileView2.setVisibility(View.GONE);
-                tileView3.setVisibility(View.GONE);
-                tileView4.setVisibility(View.GONE);
-                tileView5.setVisibility(View.VISIBLE);
-            }
-        });
-
-        
-        //TileView tileView = new TileView( this );
-
-        //Set the size of the original image
-        tileView1.setSize(2915, 2100);
-        tileView2.setSize(2915, 2100);
-        tileView3.setSize(2915, 2100);
-        tileView4.setSize(2915, 2100);
-        tileView5.setSize(2915, 2100);
-
-        //assign the tile sets to appropriate tileview
-        tileView1.addDetailLevel(1f, "abertaylevel1/%d-%d.png", 485, 350);
-        tileView2.addDetailLevel(1f, "abertaylevel2/%d-%d.png", 485, 350);
-        tileView3.addDetailLevel(1f, "abertaylevel3/%d-%d.png", 485, 350);
-        tileView4.addDetailLevel(1f, "abertaylevel4/%d-%d.png", 485, 350);
-        tileView5.addDetailLevel(1f, "abertaylevel5/%d-%d.png", 485, 350);
-        //setContentView(tileView);
-
-        //Set the bounds for each tileview for placing the paths/markers
-        tileView1.defineBounds(0, 0, 2915, 2100);
-        tileView2.defineBounds(0, 0, 2915, 2100);
-        tileView3.defineBounds(0, 0, 2915, 2100);
-        tileView4.defineBounds(0, 0, 2915, 2100);
-        tileView5.defineBounds(0, 0, 2915, 2100);
+        // ---------- End of auto complete panel set-up
 
 
+        /* ==========================================
+         *      Pin markers set-up
+         * ==========================================
+         */
         ImageView imageView = new ImageView( this );
         imageView.setImageResource(R.drawable.blue_empty);
         tileView1.addMarker(imageView, 620, 1815, -0.5f, -1.0f);
@@ -225,6 +194,11 @@ public class MainActivity extends AppCompatActivity
         imageView2.setImageResource(R.drawable.red_empty);
         tileView1.addMarker(imageView2, 1195, 1530, -0.5f, -1.0f);
 
+        /* ==========================================
+         *      TODO
+         *      I'm lost there
+         * ==========================================
+         */
 //        ArrayList<double[]> points = new ArrayList<>();
 //
 //        {
@@ -350,20 +324,50 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_item1) {
-            Toast.makeText(MainActivity.this, "nav item 1 selected", Toast.LENGTH_SHORT).show();
+            // ---------- Display floor 1
+            tileView1.setVisibility(View.VISIBLE);
+            tileView2.setVisibility(View.GONE);
+            tileView3.setVisibility(View.GONE);
+            tileView4.setVisibility(View.GONE);
+            tileView5.setVisibility(View.GONE);
         } else if (id == R.id.nav_item2) {
-            Toast.makeText(MainActivity.this, "nav item 2 selected", Toast.LENGTH_SHORT).show();
+            // ---------- Display floor 2
+            tileView1.setVisibility(View.GONE);
+            tileView2.setVisibility(View.VISIBLE);
+            tileView3.setVisibility(View.GONE);
+            tileView4.setVisibility(View.GONE);
+            tileView5.setVisibility(View.GONE);
         } else if (id == R.id.nav_item3) {
-            Toast.makeText(MainActivity.this, "nav item 3 selected", Toast.LENGTH_SHORT).show();
+            // ---------- Display floor 3
+            tileView1.setVisibility(View.GONE);
+            tileView2.setVisibility(View.GONE);
+            tileView3.setVisibility(View.VISIBLE);
+            tileView4.setVisibility(View.GONE);
+            tileView5.setVisibility(View.GONE);
         } else if (id == R.id.nav_item4) {
-            Toast.makeText(MainActivity.this, "nav item 4 selected", Toast.LENGTH_SHORT).show();
+            // ---------- Display floor 4
+            tileView1.setVisibility(View.GONE);
+            tileView2.setVisibility(View.GONE);
+            tileView3.setVisibility(View.GONE);
+            tileView4.setVisibility(View.VISIBLE);
+            tileView5.setVisibility(View.GONE);
+        } else if (id == R.id.nav_item5) {
+            // ---------- Display floor 5
+            tileView1.setVisibility(View.GONE);
+            tileView2.setVisibility(View.GONE);
+            tileView3.setVisibility(View.GONE);
+            tileView4.setVisibility(View.GONE);
+            tileView5.setVisibility(View.VISIBLE);
+        } else if ( id == R.id.nav_item_sync ) {
+            // ---------- Start activity for downloading timetable
+            Intent intent = new Intent(this, TimetableActivity.class);
+            startActivity( intent );
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
