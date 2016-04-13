@@ -39,7 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Creates the database if it doesn't exist and adds the "contacts" table.
         /* Execute SQL query. */
-        db.execSQL(EVENTS_TABLE_CREATE);
+        // TODO db.execSQL(EVENTS_TABLE_CREATE);
     }
 
     @Override
@@ -50,8 +50,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void addEvent(Event e){
         /* Pack contact details in ContentValues object for database insertion. */
         ContentValues row = new ContentValues();
-        row.put(this.COLUMN_NAMES[0], e.getDateStart().);
-        row.put(this.COLUMN_NAMES[1], e.getDateEnd());
+        // TODO
+        //row.put(this.COLUMN_NAMES[0], e.getDateStart().);
+        //row.put(this.COLUMN_NAMES[1], e.getDateEnd());
         row.put(this.COLUMN_NAMES[2], e.getLocation());
         row.put(this.COLUMN_NAMES[3], e.getClassName());
         row.put(this.COLUMN_NAMES[4], e.getClassType());
@@ -94,15 +95,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         for(int i = 0; i < result.getCount(); i++){
             result.moveToPosition(i);
             /* Create a Contact object with using data from name, email, phone columns. Add it to list. */
-            events.add(new Event(
+            /*events.add(new Event(
                     result.getString(0),
                     result.getString(1),
                     result.getString(2),
                     result.getString(3),
                     result.getString(4),
-                    result.getString(5)
+                    result.getString(5),
                     result.getString(6)
-            ));
+            )); TODO */
         }
 
         return events;

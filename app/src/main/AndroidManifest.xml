@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.jason.groupapp">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -27,8 +29,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.jason.groupapp.MainActivity" />
         </activity>
+        <activity
+            android:name=".ItineraryParametersActivity"
+            android:label="@string/title_activity_itinerary_parameters"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.jason.groupapp.MainActivity" />
+        </activity>
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

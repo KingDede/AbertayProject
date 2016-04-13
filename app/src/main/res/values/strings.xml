@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Abertay map</string>
-    <string name="title_activity_timetable">Timetable</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -9,8 +8,17 @@
     <string name="nav_bar_main_title">Abertay University</string>
     <string name="nav_bar_sub_title">sub title goes here</string>
 
+    <string name="title_activity_timetable">Timetable</string>
+
     <string name="legend_enter_link">Please enter your webcalendar link.</string>
     <string name="legend_enter_link_help1">This link has been sent to you by eamil at the start of the year.</string>
     <string name="legend_enter_link_help2">Please do NOT include the \"webcal://\"  part at the start of the link.</string>
     <string name="hint_link">Calendar link</string>
+
+
+    <string name="title_activity_itinerary_parameters">Itinerary parameters</string>
+
+    <string name="legend_itinerary">Please enter your itinerary.</string>
+    <string name="hint_location">Your location</string>
+    <string name="hint_destination">Your destination</string>
 </resources>

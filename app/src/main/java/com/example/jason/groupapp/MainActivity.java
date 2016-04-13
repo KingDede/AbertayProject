@@ -39,13 +39,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
-    private TileView tileView1;
-    private TileView tileView2;
-    private TileView tileView3;
-    private TileView tileView4;
-    private TileView tileView5;
+    private final int ITINERARY_REQUEST = 42;
+
+    private TileView tileView1, tileView2, tileView3, tileView4, tileView5;
+
+    private Button btnLevel1, btnLevel2 , btnLevel3, btnLevel4, btnLevel5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity
         tileView3.addDetailLevel(1f, "abertaylevel3/%d-%d.png", 485, 350);
         tileView4.addDetailLevel(1f, "abertaylevel4/%d-%d.png", 485, 350);
         tileView5.addDetailLevel(1f, "abertaylevel5/%d-%d.png", 485, 350);
-        //Set the bounds for each tileview for placing the paths/markers
+        // Set the bounds for each tileview for placing the paths/markers
         tileView1.defineBounds(0, 0, 2915, 2100);
         tileView2.defineBounds(0, 0, 2915, 2100);
         tileView3.defineBounds(0, 0, 2915, 2100);
@@ -106,6 +106,24 @@ public class MainActivity extends AppCompatActivity
         tileView5.defineBounds(0, 0, 2915, 2100);
         // ---------- End of image set-up
 
+
+        /* ==========================================
+         *      Buttons set-up
+         * ==========================================
+         */
+        // ---------- Creation
+        btnLevel1 = (Button) findViewById(R.id.button1);
+        btnLevel2 = (Button) findViewById(R.id.button2);
+        btnLevel3 = (Button) findViewById(R.id.button3);
+        btnLevel4 = (Button) findViewById(R.id.button4);
+        btnLevel5 = (Button) findViewById(R.id.button5);
+        // ---------- Adding listeners
+        btnLevel1.setOnClickListener( this );
+        btnLevel2.setOnClickListener( this );
+        btnLevel3.setOnClickListener( this );
+        btnLevel4.setOnClickListener( this );
+        btnLevel5.setOnClickListener( this );
+        // ---------- End of buttons set-up
 
         /* ==========================================
          *      Nodes set-up
@@ -318,6 +336,8 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Toast.makeText(MainActivity.this, "Settings selected", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, ItineraryParametersActivity.class);
+            startActivityForResult(intent, ITINERARY_REQUEST );
             return true;
         }
 
@@ -329,50 +349,86 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_item1) {
-            // ---------- Display floor 1
-            tileView1.setVisibility(View.VISIBLE);
-            tileView2.setVisibility(View.GONE);
-            tileView3.setVisibility(View.GONE);
-            tileView4.setVisibility(View.GONE);
-            tileView5.setVisibility(View.GONE);
-        } else if (id == R.id.nav_item2) {
-            // ---------- Display floor 2
-            tileView1.setVisibility(View.GONE);
-            tileView2.setVisibility(View.VISIBLE);
-            tileView3.setVisibility(View.GONE);
-            tileView4.setVisibility(View.GONE);
-            tileView5.setVisibility(View.GONE);
-        } else if (id == R.id.nav_item3) {
-            // ---------- Display floor 3
-            tileView1.setVisibility(View.GONE);
-            tileView2.setVisibility(View.GONE);
-            tileView3.setVisibility(View.VISIBLE);
-            tileView4.setVisibility(View.GONE);
-            tileView5.setVisibility(View.GONE);
-        } else if (id == R.id.nav_item4) {
-            // ---------- Display floor 4
-            tileView1.setVisibility(View.GONE);
-            tileView2.setVisibility(View.GONE);
-            tileView3.setVisibility(View.GONE);
-            tileView4.setVisibility(View.VISIBLE);
-            tileView5.setVisibility(View.GONE);
-        } else if (id == R.id.nav_item5) {
-            // ---------- Display floor 5
-            tileView1.setVisibility(View.GONE);
-            tileView2.setVisibility(View.GONE);
-            tileView3.setVisibility(View.GONE);
-            tileView4.setVisibility(View.GONE);
-            tileView5.setVisibility(View.VISIBLE);
-        } else if ( id == R.id.nav_item_sync ) {
-            // ---------- Start activity for downloading timetable
-            Intent intent = new Intent(this, TimetableActivity.class);
-            startActivity( intent );
+        switch ( id ) {
+            case R.id.nav_item_sync:
+                // ---------- Start activity for downloading timetable
+                Intent intent = new Intent(this, TimetableActivity.class);
+                startActivity( intent );
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    @Override
+    public void onClick(View v) {
+
+        int buttonId = v.getId();
+        switch (buttonId) {
+            case R.id.button1:
+                displayFloor(1);
+                break;
+            case R.id.button2:
+                displayFloor(2);
+                break;
+            case R.id.button3:
+                displayFloor(3);
+                break;
+            case R.id.button4:
+                displayFloor(4);
+                break;
+            case R.id.button5:
+                displayFloor(5);
+                break;
+            default:
+                break;
+
+        }
+
+    }
+
+    private void displayFloor( int number ) {
+        tileView1.setVisibility(View.GONE);
+        tileView2.setVisibility(View.GONE);
+        tileView3.setVisibility(View.GONE);
+        tileView4.setVisibility(View.GONE);
+        tileView5.setVisibility(View.GONE);
+        switch (number) {
+            case 1:
+                tileView1.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                tileView2.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                tileView3.setVisibility(View.VISIBLE);
+                break;
+            case 4:
+                tileView4.setVisibility(View.VISIBLE);
+                break;
+            case 5:
+                tileView5.setVisibility(View.VISIBLE);
+                break;
+            default:
+                break;
+
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case ITINERARY_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    Bundle res = data.getExtras();
+                    String location = res.getString("loc");
+                    String destination = res.getString("dest");
+                    Log.d( "Result", "location: " + location + " - destination: " + destination );
+                }
+                break;
+        }
+    }
+
 
 }
