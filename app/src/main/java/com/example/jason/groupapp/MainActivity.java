@@ -192,6 +192,7 @@ public class MainActivity extends AppCompatActivity
 
                     tileView4.addMarker(imageView, points.get(0)[0], points.get(0)[1], -0.5f, -1.0f);
                     tileView4.addMarker(imageView2, points.get(1)[0], points.get(1)[1], -0.5f, -1.0f);
+                    tileView4.drawPath(points, null);
                     return true;
                 }
                 return false;
@@ -252,61 +253,45 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /*
+        TODO
+        fix search returning incorrect room when names are similar
+        e.g searching using 4501 as destination puts a marker on 4501.4
+     */
     public List<double[]> drawPath (String start, String end)
     {
         Toast.makeText(MainActivity.this, "Start = " + start + " End = " + end , Toast.LENGTH_SHORT).show();
         NodePath nPath = new NodePath(this.getApplicationContext());
         String[] startInfo = new String[3];
         String[] endInfo = new String[3];
-        List<String[]> floor4Rooms = nPath.parseRooms4();
+        List<String[]> floor4Rooms = nPath.parseCSV("floor_4_rooms");
 
         for (String[] curVal : floor4Rooms) {
             if (curVal[0].contains(start)) {
                 startInfo[0] = curVal[0];
                 startInfo[1] = curVal[1];
                 startInfo[2] = curVal[2];
-                Log.d("startInfo", "" + startInfo[0] + "-" + startInfo[1] + "-" + startInfo[2]);
             }
             else if (curVal[0].contains(end)) {
                 endInfo[0] = curVal[0];
                 endInfo[1] = curVal[1];
                 endInfo[2] = curVal[2];
             }
-
-//            Log.d("startNameSearch", "" + start);
-//            Log.d("endNameSearch", "" + end);
-            Log.d("curval", "" + curVal[0] + "-" + curVal[1] + "-" + curVal[2]);
         }
-
-//        TileView tileView4 = (TileView) findViewById(R.id.view4);
-//        ImageView imageView = new ImageView( this );
-//        imageView.setImageResource(R.drawable.blue_empty);
         Double startPosX = Double.parseDouble(startInfo[1]);
         Double startPosY = Double.parseDouble(startInfo[2]);
         Double endPosX = Double.parseDouble(endInfo[1]);
         Double endPosY = Double.parseDouble(endInfo[2]);
-//        tileView4.addMarker(imageView, startPosX, startPosY, -0.5f, -1.0f);
-//        tileView4.addMarker(imageView, endPosX, endPosY, -0.5f, -1.0f);
 
 
         List<double[]> points = new ArrayList<>();
         {
             points.add( new double[] {startPosX, startPosY} );
-            points.add( new double[] {endPosX, endPosY} );
+            points.add(new double[]{endPosX, endPosY});
         }
+        //points.addAll(nPath.generatePath(startPosX, startPosY, endPosX, endPosY));
 
         return points;
-//        Log.d("startposX", "" + startInfo[1]);
-//        Log.d("startposY", "" + startInfo[2]);
-//        Log.d("endposX", "" + endInfo[1]);
-//        Log.d("endposY", "" +endInfo[2]);
-//        Log.d("RealstartposName", "" + floor4Rooms.get(33)[0]);
-//        Log.d("RealstartposX", "" + floor4Rooms.get(33)[1]);
-//        Log.d("RealstartposY", "" + floor4Rooms.get(33)[2]);
-//        Log.d("RealendposName", "" + floor4Rooms.get(41)[0]);
-//        Log.d("RealendposX", "" + floor4Rooms.get(41)[1]);
-//        Log.d("RealendposY", "" + floor4Rooms.get(41)[2]);
-
     }
 
     @Override
