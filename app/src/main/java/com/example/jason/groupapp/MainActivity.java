@@ -355,8 +355,10 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(this, TimetableActivity.class);
                 startActivity( intent );
                 break;
+            case R.id.nav_item_next:
+                Snackbar.make(getCurrentFocus(), "Your next class is ...", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
