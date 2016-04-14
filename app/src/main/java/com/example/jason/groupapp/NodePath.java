@@ -25,7 +25,7 @@ public class NodePath {
     {
         List<String> rooms = new ArrayList<>();
         List<String[]> allRoomInfo = new ArrayList<>();
-        allRoomInfo.addAll(parseRooms4());
+        allRoomInfo.addAll(parseCSV("floor_4_rooms"));
 
         for (int i=0; i < allRoomInfo.size(); i++) {
             rooms.add(allRoomInfo.get(i)[0]);
@@ -34,24 +34,70 @@ public class NodePath {
         return rooms;
     }
 
-    public List<String[]> parseRooms4 ()
+    public List<String[]> parseCSV (String fileName)
     {
-        List<String[]> floor4Rooms = new ArrayList<>();
+        List<String[]> nodeList = new ArrayList<>();
         AssetManager assetManager = context.getAssets();
 
         try {
-            InputStream csvStream = assetManager.open("nodes/floor_4_rooms.csv");
+            InputStream csvStream = assetManager.open("nodes/" + fileName + ".csv");
             InputStreamReader csvStreamReader = new InputStreamReader(csvStream);
             CSVReader csvReader = new CSVReader(csvStreamReader);
             String[] line;
 
             while ((line = csvReader.readNext()) != null) {
-                floor4Rooms.add(line);
+                nodeList.add(line);
 
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return floor4Rooms;
+        return nodeList;
+    }
+
+    /*
+        TODO
+        this makes the app freeze maybe try using another thread or something
+     */
+    public List<double[]> generatePath (double startPosX, double startPosY, double endPosX, double endPosY)
+    {
+        List<String[]> nodeInfo = new ArrayList<>();
+        nodeInfo.addAll(parseCSV("floor_4_paths"));
+        List<double[]> paths4 = new ArrayList<>();
+        double[] nodes = new double[3];
+        for (String[] curVal : nodeInfo) {
+            nodes[0] = Double.parseDouble(curVal[1]);
+            nodes[1] = Double.parseDouble(curVal[2]);
+            paths4.add(nodes);
+        }
+
+        List<double[]> genPath = new ArrayList<>();
+        Boolean path = Boolean.FALSE;
+        double activeNode[] = {startPosX, startPosY};
+
+        while (path != Boolean.TRUE)
+        {
+            double curNode[] = {startPosX, startPosY};
+            double shortDist = 100.0;
+
+            for (double[] curVal : paths4) {
+                double dist = (Math.sqrt(Math.pow(activeNode[0] - curVal[0], 2) + Math.pow(activeNode[1] - curVal[1], 2)));
+                if (dist != 0 && dist < shortDist){
+                    shortDist = dist;
+                    curNode[0] = curVal[0];
+                    curNode[1] = curVal[1];
+                }
+            }
+            activeNode[0] = curNode[0];
+            activeNode[1] = curNode[1];
+            genPath.add(activeNode);
+
+            if (activeNode[0] == endPosX && activeNode[1] == endPosY){
+                path = Boolean.TRUE;
+            }
+        }
+
+        return genPath;
+
     }
 }
