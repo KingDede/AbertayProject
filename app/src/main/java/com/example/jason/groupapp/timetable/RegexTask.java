@@ -3,13 +3,14 @@ package com.example.jason.groupapp.timetable;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
 import android.widget.ProgressBar;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
@@ -35,9 +36,13 @@ public class RegexTask extends AsyncTask<File, Integer, Void> {
         this.progressBar = progressBar;
     }
 
+    /* ==========================================
+     *      Task's lifecycle
+     * ==========================================
+     */
     @Override
     protected void onPreExecute() {
-        Log.v("Regex", "Start");
+        Log.w("Regex", "Start");
         progressBar.setProgress(0);
     }
 
@@ -48,16 +53,22 @@ public class RegexTask extends AsyncTask<File, Integer, Void> {
         File calendarFile = params[0];
         try {
 
-            Log.v("Regex", "Running");
+            Log.w("Regex", "Running");
 
             // fetching data from file
             CalendarReader calReader = new CalendarReader( calendarFile );
-            ArrayList<Event> classes = calReader.readCalendar();
+            Log.w("Regex", "Start of reading file");
+            ArrayList<Event> classes = new ArrayList<Event>(); // TODO
+            //ArrayList<Event> classes = calReader.readCalendar();
+            Log.w("Regex", "End of reading file");
             // storing data in database
             DatabaseHelper DB = new DatabaseHelper( context );
+            Integer[] progressData = new Integer[ 2 ];
+            progressData[0] = classes.size();
             for ( int i = 0; i < classes.size(); i++ ) {
                 DB.addEvent( classes.get( i ) );
-                publishProgress(i);
+                progressData[1] = i;
+                publishProgress(progressData);
             }
             // deleting file
             calendarFile.delete();
@@ -73,23 +84,65 @@ public class RegexTask extends AsyncTask<File, Integer, Void> {
 
     @Override
     protected void onPostExecute(Void result) {
-        progressBar.setVisibility(View.GONE);
         Log.w("Regex", "Finished");
-        //txt.setText(result);
-        //btn.setText("Restart");
+        if ( context instanceof TimetableActivity ) {
+            ((TimetableActivity) context).finish();
+        } else {
+            Log.e("Regex", "Activity can't finish");
+        }
     }
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-        Log.v("Webcal", "Running..."+ values[1]);
+        Log.w("Regex", "Running..."+ values[1]);
         progressBar.setMax(values[0]);
         progressBar.setProgress(values[1]);
     }
 
 
+    /* ==========================================
+     *      Private class
+     * ==========================================
+     */
     private class CalendarReader {
 
         private File sourceFile;
+
+
+        private final String TO_THE_LINE = "\n";//"\\s\\s";
+        private final String REGEX_VEVENT = "BEGIN:VEVENT" + TO_THE_LINE + "(\\s||\\S)*" + "END:VEVENT";
+
+        // the markers that will allow to delimit blocks of data
+        private final String START_DATE = "DTSTART:";
+        private final String END_DATE = "DTEND:";
+        private final String LOCATION = "LOCATION:";
+        private final String END_LOCATION = TO_THE_LINE + "UID:";
+        private final String SUMMARY = "SUMMARY:";
+        private final String END_SUMMARY = TO_THE_LINE + "DESCRIPTION:Module";
+
+        // the regular expressions to extract the interesting blocks of data
+        // at least one character between the two markers
+        private final String REGEX_DATE_START = START_DATE + "((\\s||\\S)+)" + END_DATE;
+        private final String REGEX_DATE_END  = END_DATE + "((\\s||\\S)+)" + LOCATION;
+        private final String REGEX_LOCATION  = LOCATION + "((\\s||\\S)+)" + END_LOCATION;
+        private final String REGEX_TEACHER_SURNAME = "";
+        private final String REGEX_TEACHER_FIRSTNAME = "";
+
+        // finding the class type and name and teacher's names
+        final String SEMICOLON = "\\\\;\\s";
+        // a slash mark, a semicolon and a whitespace character
+        final String ANY_CHARACTER = "\\s||\\S";
+        // any whitespace or non-whitespace character
+        final String MULTI_PART = "((" + ANY_CHARACTER + "||("+ SEMICOLON+"))+)";
+        // a group of at least one ANY_CHARACTER or SEMICOLON
+
+        final String REGEX_CLASS = MULTI_PART;
+        // a group of at least one ANY_CHARACTER or SEMICOLON
+        final String REGEX_TYPE = SEMICOLON + "((" + ANY_CHARACTER + ")+)" + SEMICOLON;
+        // a group preceded with a semi colon followed by a whitespace containing at least one character and ending with a semicolon and a whitespace
+        final String REGEX_TEACHER = "(("+ANY_CHARACTER+")+)" + "\\\\,\\s" + "(("+ANY_CHARACTER+")+)";
+
+
 
         /**
          * @param calendarFile
@@ -108,30 +161,47 @@ public class RegexTask extends AsyncTask<File, Integer, Void> {
 
             ArrayList<Event> classes = new ArrayList<Event>();
 
+            Log.e( "Read calendar", "Step 1" );
             try {
                 // convert content of file into a CharSequence
                 FileInputStream input = new FileInputStream( sourceFile );
                 FileChannel channel = input.getChannel();
 
                 // Create a read-only CharBuffer on the file
-                ByteBuffer bbuf = channel.map( FileChannel.MapMode.READ_ONLY, 0, (int)channel.size() );
-                CharBuffer cbuf = Charset.forName( "UTF-8" ).newDecoder().decode( bbuf );
+                ByteBuffer bbuf = channel.map(FileChannel.MapMode.READ_ONLY, 0, (int) channel.size());
+                CharBuffer cbuf = Charset.forName( "UTF-8" ).newDecoder().decode(bbuf);
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(input));
+                String line;
+                String entireFile = "";
+                try {
+                    while((line = br.readLine()) != null) { // <--------- place readLine() inside loop
+                        entireFile += (line + "\n"); // <---------- add each line to entireFile
+                    }
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                //Log.w("Test file", cbuf.toString());
 
                 // Create matcher on file
                 // we select all the characters between the begin and end tags of a VEvent in the file
-                final String TO_THE_LINE = "\\s\\s";
-                final String REGEX_VEVENT = "BEGIN:VEVENT" + TO_THE_LINE + "(\\s||\\S)*" + "END:VEVENT";
                 Pattern pattern = Pattern.compile( REGEX_VEVENT );
-                Matcher matcher = pattern.matcher( cbuf );
+                Matcher matcher = pattern.matcher( /*cbuf*/entireFile );
 
+                Log.e( "Read calendar", "Step 2" );
+                Log.e( "Read calendar", REGEX_VEVENT );
+                Log.e( "Read calendar", entireFile );
                 // Find all matches in the file
                 while ( matcher.find() ) {
+                    Log.e( "Read calendar", "Step 2.0" );
                     // Get the matching string and create the VEvent from it
                     classes.add( extractClass( matcher.group() ) );
+                    Log.e("Read calendar", "Step 3");
                 } // -------------------- end of while ()
             } // -------------------- end of try ()
             catch ( IOException ex ) {
-                System.out.println( ex.getMessage() );
+                Log.e( "Regex", ex.getMessage() );
             }
 
             // sorting the VEvents prior returning them
@@ -142,6 +212,10 @@ public class RegexTask extends AsyncTask<File, Integer, Void> {
 
         private Event extractClass ( String theData ) {
 
+            Log.e( "Read calendar", "Step 2.1" );
+
+            //Log.e( "Read calendar", theData );
+
             // attributes to create from the data
             GregorianCalendar dateStart = null;
             GregorianCalendar dateEnd = null;
@@ -151,33 +225,17 @@ public class RegexTask extends AsyncTask<File, Integer, Void> {
             String teacherSurname = "";
             String teacherFirstname = "";
 
-
-            final String TO_THE_LINE = "\\s\\s";
-
-            // the markers that will allow to delimit blocks of data
-            final String START_DATE = "DTSTART:";
-            final String END_DATE = "DTEND:";
-            final String LOCATION = "LOCATION:";
-            final String END_LOCATION = TO_THE_LINE + "UID:";
-            final String SUMMARY = "SUMMARY:";
-            final String END_SUMMARY = TO_THE_LINE + "DESCRIPTION:Module";
-
-            // the regular expressions to extract the interesting blocks of data
-            // at least one character between the two markers
-            final String REGEX_DATE_START = START_DATE + "((\\s||\\S)+)" + END_DATE;
-            final String REGEX_DATE_END  = END_DATE + "((\\s||\\S)+)" + LOCATION;
-            final String REGEX_LOCATION  = LOCATION + "((\\s||\\S)+)" + END_LOCATION;
-            String REGEX_TEACHER_SURNAME;
-            String REGEX_TEACHER_FIRSTNAME;
-
             Pattern pattern;
             Matcher matcher;
             // finding the start date
-            pattern = Pattern.compile( REGEX_DATE_START );
-            matcher = pattern.matcher( theData );
+            pattern = Pattern.compile(REGEX_DATE_START);
+            matcher = pattern.matcher(theData);
+            Log.e( "Read calendar", "Step 2.2" );
             if ( matcher.find() ) {
+                Log.e("Read calendar", "Date : " + matcher.group( 1 ) );
                 dateStart = extractDate( matcher.group( 1 ) );
             }
+            Log.e( "Read calendar", "Step 2.3" );
             // finding the end date
             pattern = Pattern.compile( REGEX_DATE_END );
             matcher = pattern.matcher( theData );
@@ -191,49 +249,37 @@ public class RegexTask extends AsyncTask<File, Integer, Void> {
                 location = cleanSemicolons( matcher.group( 1 ) );
                 //System.out.println( "Location : " + location );
             }
-            // finding the class type and name and teacher's names
-            final String SEMICOLON = "\\\\;\\s";
-            // a slash mark, a semicolon and a whitespace character
-            final String ANY_CHARACTER = "\\s||\\S";
-            // any whitespace or non-whitespace character
-            final String MULTI_PART = "((" + ANY_CHARACTER + "||("+ SEMICOLON+"))+)";
-            // a group of at least one ANY_CHARACTER or SEMICOLON
 
-            final String REGEX_CLASS = MULTI_PART;
-            // a group of at least one ANY_CHARACTER or SEMICOLON
-            final String REGEX_TYPE = SEMICOLON + "((" + ANY_CHARACTER + ")+)" + SEMICOLON;
-            // a group preceded with a semi colon followed by a whitespace containing at least one character and ending with a semicolon and a whitespace
             final String REGEX_LOCATION_BIS = //LOCATION + "((\\s||\\S)+)" + END_LOCATION;
                     location.charAt( 0 ) + MULTI_PART + SEMICOLON;
             //
-            final String REGEX_TEACHER = "(("+ANY_CHARACTER+")+)" + "\\\\,\\s" + "(("+ANY_CHARACTER+")+)";
-
             // (ANY_CHARACTER+) => a group containing at least one ANY_CHARACTER
             final String REGEX_CLASS_SUMMARY = SUMMARY + REGEX_CLASS + REGEX_TYPE + REGEX_LOCATION_BIS + "(((" + REGEX_TEACHER  + ")||" + SEMICOLON + ")+)" + END_SUMMARY;
-            System.out.println( REGEX_CLASS_SUMMARY);
+
+            //System.out.println( REGEX_CLASS_SUMMARY);
             pattern = Pattern.compile( REGEX_CLASS_SUMMARY );
             matcher = pattern.matcher( theData );
             if ( matcher.find() ) {
 
                 // finding the class name
-                String tempClassName = cleanSemicolons( cleanSpaces( matcher.group( 1 ) ) );
+                String tempClassName = cleanSemicolons( cleanSpaces(matcher.group(1)) );
                 // replacing semicolons by hyphens
                 className = tempClassName.replaceAll( "\\\\;\\s", " - " );
                 // finding the class type
                 classType = cleanSpaces( matcher.group( 4 ) );
-                System.err.println( "Class name : " + className );
+                //System.err.println( "Class name : " + className );
 
                 // TODO there can be more than one teacher
                 // finding the teacher surname
                 teacherSurname = cleanSpaces( matcher.group( 12 ) );
                 // finding the teacher first name
                 teacherFirstname = cleanSpaces( matcher.group( 15 ) );
-                System.err.println( teacherSurname + "~" + teacherFirstname ); // TODO find the first name, and cut correctly the surname*/
+                //System.err.println( teacherSurname + "~" + teacherFirstname ); // TODO find the first name, and cut correctly the surname*/
 
             }
 
-            Event newEvent = new Event( dateStart, dateEnd, location, className, classType, teacherSurname, teacherFirstname );
-            System.err.println( newEvent.displayClass() );
+            Event newEvent = new Event(dateStart, dateEnd, location, className, classType, teacherSurname, teacherFirstname );
+            Log.d( "Regex", newEvent.displayClass() );
             return newEvent;
 
         }

@@ -6,9 +6,17 @@ package com.example.jason.groupapp.timetable;
  * Contact details: cecile.journeaux@gmail.com
  */
 
+import android.util.Log;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class Event implements Comparable {
+
+	public static DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss");
 
 	/* ========================================
 	 * 		Private attributes
@@ -96,6 +104,25 @@ public class Event implements Comparable {
     } // ---------------------------------------- compareTo()
 
 	/* ========================================
+	 * 		Date converters
+	 * ========================================
+	 */
+    public static String getDateToString ( GregorianCalendar gregDate ) {
+        return DATE_FORMAT.format( gregDate.getTime() );
+    }
+    public static GregorianCalendar getStringToDate ( String stringDate ) {
+        Date tmpDate = null;
+        try {
+            tmpDate = DATE_FORMAT.parse(stringDate);
+        } catch (ParseException e) {
+            Log.e("Event", e.getMessage());
+        }
+        GregorianCalendar gregDate = (GregorianCalendar)GregorianCalendar.getInstance();
+        gregDate.setTime(tmpDate);
+        return gregDate;
+    }
+
+    /* ========================================
 	 * 		Getters
 	 * ========================================
 	 */

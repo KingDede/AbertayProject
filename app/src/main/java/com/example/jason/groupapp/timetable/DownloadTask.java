@@ -1,5 +1,6 @@
 package com.example.jason.groupapp.timetable;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
@@ -26,16 +27,22 @@ public class DownloadTask extends AsyncTask<CharSequence, Integer, File> {
     private File calendarFile;
     private final String filename = "calendar.ics";
 
+    private Context context;
     private ProgressBar progressBar;
 
-    public DownloadTask( File fileDir, ProgressBar progressBar ) {
+    public DownloadTask( Context context, File fileDir, ProgressBar progressBar ) {
+        this.context = context;
         this.fileDir = fileDir;
         this.progressBar = progressBar;
     }
 
+    /* ==========================================
+     *      Task's lifecycle
+     * ==========================================
+     */
     @Override
     protected void onPreExecute() {
-        Log.v( "Webcal", "Start download");
+        Log.w( "Webcal", "Start download");
         calendarFile = new File( fileDir, filename );
         if ( calendarFile.exists() ) {
             calendarFile.delete();
@@ -54,7 +61,7 @@ public class DownloadTask extends AsyncTask<CharSequence, Integer, File> {
         int count;
         try {
 
-            Log.v("Webcal", "Downloading");
+            Log.w("Webcal", "Downloading");
 
             URL url = new URL(params[0].toString());
             URLConnection connection = url.openConnection();
@@ -86,9 +93,7 @@ public class DownloadTask extends AsyncTask<CharSequence, Integer, File> {
             return calendarFile;
         } catch (MalformedURLException e) {
             Log.e("Webcal", e.getMessage());
-        } /*catch (InterruptedException e) {
-            Log.e("Webcal", e.getMessage());
-        } */catch (IOException e) {
+        } catch (IOException e) {
             Log.e("Webcal", e.getMessage());
         }
         return null;
@@ -96,16 +101,14 @@ public class DownloadTask extends AsyncTask<CharSequence, Integer, File> {
 
     @Override
     protected void onPostExecute(File result) {
-        progressBar.setVisibility(View.GONE);
         Log.w("Webcal", "Downloaded");
-        //txt.setText(result);
-        //btn.setText("Restart");
+        new RegexTask(context, progressBar).execute(calendarFile);
     }
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-        Log.v("Webcal", "Running..."+ values[1]);
-        progressBar.setMax(values[0]);
+        Log.w("Webcal", "Running..."+ values[1]);
+        progressBar.setMax(values[0] * 2);
         progressBar.setProgress(values[1]);
     }
 

@@ -33,4 +33,9 @@
         android:icon="@android:drawable/ic_menu_my_calendar"
         android:title="Add your timetable" />
 
+    <item
+        android:id="@+id/nav_item_next"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="See your next class" />
+
 </menu>

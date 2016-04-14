@@ -15,7 +15,12 @@ import com.example.jason.groupapp.R;
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 
-public class TimetableActivity extends AppCompatActivity {
+public class TimetableActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private TextView textURL;
+    private FloatingActionButton fab;
+    private ProgressBar progressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +36,13 @@ public class TimetableActivity extends AppCompatActivity {
          *      Attributes set-up
          * ==========================================
          */
-        final TextView textURL = (TextView)findViewById(R.id.input_link);
+        // ---------- Initialisation
+        textURL = (TextView)findViewById(R.id.input_link);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        // ---------- Visibility
+        fab.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
 
         /* ==========================================
          *      Initialisation of basic controls
@@ -41,33 +52,33 @@ public class TimetableActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // ---------- FloatingActionButton
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CharSequence URL = textURL.getText();
-                if (URL.length() > 0) {
-                    if (!URL.toString().startsWith("webcal://")) {
-                        File fileDir = getApplicationContext().getCacheDir();
-                        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-                        try {
-                            File calendar = new DownloadTask(fileDir, progressBar).execute("http://"+URL).get();
-                            new RegexTask( getApplicationContext(), progressBar ).execute(calendar);
-                            finish();
-                        } catch (InterruptedException e) {
-                            Log.e("Tasks", e.getMessage());
-                        } catch (ExecutionException e) {
-                            Log.e("Tasks", e.getMessage());
-                        }
-                    } else {
-                        Snackbar.make(view, "Please remove the \"webcal://\" at the start of your link!", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                    }
-                }
-            }
-        });
+        fab.setOnClickListener(this);
         // ---------- Back action
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @Override
+    public void onClick(View v) {
+
+        if ( v.getId() == R.id.fab ) {
+            CharSequence URL = textURL.getText();
+            if (URL.length() > 0) {
+                if (!URL.toString().startsWith("webcal://")) {
+                    File fileDir = getApplicationContext().getFilesDir();//getCacheDir();
+                    Log.e("Caldendar", fileDir.toString());
+                    try {
+                        fab.setVisibility(View.GONE);
+                        new DownloadTask(v.getContext(), fileDir, progressBar).execute("http://" + URL).get();
+                    } catch (InterruptedException e) {
+                        Log.e("Tasks", e.getMessage());
+                    } catch (ExecutionException e) {
+                        Log.e("Tasks", e.getMessage());
+                    }
+                } else {
+                    Snackbar.make(v, "Please remove the \"webcal://\" at the start of your link!", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            }
+        }
+    }
 }
