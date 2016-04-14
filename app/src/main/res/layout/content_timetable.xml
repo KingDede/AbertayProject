@@ -59,14 +59,15 @@
     </LinearLayout>
 
     <ProgressBar
-        style="?android:attr/progressBarStyleLarge"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/abc_action_bar_progress_bar_size"
         android:id="@+id/progressBar"
-        android:max="100"
         android:layout_below="@+id/linearLayout"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="100dp"
-        android:visibility="invisible" />
+        android:layout_marginTop="@dimen/abc_action_bar_progress_bar_size"
+        android:visibility="visible"
+        android:progress="142"
+        android:max="1000" />
 
 </RelativeLayout>
