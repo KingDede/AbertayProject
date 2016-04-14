@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,13 +40,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener/*, View.OnClickListener*/, RadioGroup.OnCheckedChangeListener {
 
     private final int ITINERARY_REQUEST = 42;
 
     private TileView tileView1, tileView2, tileView3, tileView4, tileView5;
 
     private Button btnLevel1, btnLevel2 , btnLevel3, btnLevel4, btnLevel5;
+
+    private RadioGroup radioGroup1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +115,7 @@ public class MainActivity extends AppCompatActivity
          * ==========================================
          */
         // ---------- Creation
-        btnLevel1 = (Button) findViewById(R.id.button1);
+      /*  btnLevel1 = (Button) findViewById(R.id.button1);
         btnLevel2 = (Button) findViewById(R.id.button2);
         btnLevel3 = (Button) findViewById(R.id.button3);
         btnLevel4 = (Button) findViewById(R.id.button4);
@@ -122,8 +125,12 @@ public class MainActivity extends AppCompatActivity
         btnLevel2.setOnClickListener( this );
         btnLevel3.setOnClickListener( this );
         btnLevel4.setOnClickListener( this );
-        btnLevel5.setOnClickListener( this );
+        btnLevel5.setOnClickListener( this ); */
         // ---------- End of buttons set-up
+
+        radioGroup1 = (RadioGroup) findViewById(R.id.radioGroup2);
+
+        radioGroup1.setOnCheckedChangeListener(this);
 
         /* ==========================================
          *      Nodes set-up
@@ -362,7 +369,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
+  /*  @Override
     public void onClick(View v) {
 
         int buttonId = v.getId();
@@ -387,7 +394,34 @@ public class MainActivity extends AppCompatActivity
 
         }
 
+    } */
+
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId)
+    {
+        switch (checkedId)
+        {
+            case R.id.radioButton6:
+                displayFloor(1);
+                break;
+            case R.id.radioButton7:
+                displayFloor(2);
+                break;
+            case R.id.radioButton8:
+                displayFloor(3);
+                break;
+            case R.id.radioButton9:
+                displayFloor(4);
+                break;
+            case R.id.radioButton10:
+                displayFloor(5);
+                break;
+            default:
+                break;
+        }
     }
+
 
     private void displayFloor( int number ) {
         tileView1.setVisibility(View.GONE);
