@@ -15,6 +15,23 @@ import java.util.ArrayList;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    /* ==========================================
+     *      Singleton implementation
+     * ==========================================
+     */
+    private static DatabaseHelper dbInstance;
+
+    public static DatabaseHelper getInstance( Context context ) {
+        if ( dbInstance == null ) {
+            dbInstance = new DatabaseHelper(context.getApplicationContext());
+        }
+        return dbInstance;
+    }
+
+    private DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
     /* Initialise constants. */
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "AbertayDB";
@@ -30,10 +47,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_NAMES[4] + " TEXT, " +
                     COLUMN_NAMES[5] + " TEXT, " +
                     COLUMN_NAMES[6] + " TEXT);";
-
-    DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -120,5 +133,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Returns the number of affected rows. 0 means no rows were deleted.
         System.out.println(e.getDateStart().toString());
         return db.delete(EVENTS_TABLE_NAME, whereClause, null);
+    }
+
+    public Event getNextEvent(String date) {
+
+        // Get the readable database.
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Get all events by querying the database.
+        String where = COLUMN_NAMES[0] + " > ?";
+        String[] whereParams = { date };
+        String orderBy = COLUMN_NAMES[0] + " ASC";
+        String limit = "1";
+        Cursor result = db.query(EVENTS_TABLE_NAME, COLUMN_NAMES, where, whereParams, null, null, orderBy, limit);
+
+        // Convert results to an Event object.
+        Event nextEvent = null;
+
+        if ( result != null && result.getCount() == 1 && result.moveToFirst() ) {
+            nextEvent = new Event(
+                    Event.getStringToDate(result.getString(0)),
+                    Event.getStringToDate(result.getString(1)),
+                    result.getString(2),
+                    result.getString(3),
+                    result.getString(4),
+                    result.getString(5),
+                    result.getString(6)
+            );
+        }
+        db.close();
+
+        return nextEvent;
     }
 }

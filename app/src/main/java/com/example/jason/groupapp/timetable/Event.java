@@ -6,6 +6,7 @@ package com.example.jason.groupapp.timetable;
  * Contact details: cecile.journeaux@gmail.com
  */
 
+import android.content.Context;
 import android.util.Log;
 
 import java.text.DateFormat;
@@ -16,7 +17,7 @@ import java.util.GregorianCalendar;
 
 public class Event implements Comparable {
 
-	public static DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss");
+	public static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 	/* ========================================
 	 * 		Private attributes
@@ -36,7 +37,6 @@ public class Event implements Comparable {
     private String teacherSurname;
     /** the first name of the lesson's teacher */
     private String teacherFirstname;
-
 
 	/* ========================================
 	 * 		Constructor
@@ -69,7 +69,7 @@ public class Event implements Comparable {
     } // ---------------------------------------- VEvent()
 
     /* ========================================
-     * 		VEvent's own methods
+     * 		Event's own methods
      * ========================================
      */
     public String displayClass () {

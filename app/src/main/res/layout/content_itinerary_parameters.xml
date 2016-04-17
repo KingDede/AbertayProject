@@ -34,11 +34,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/design_navigation_separator_vertical_padding">
-            <EditText
+            <AutoCompleteTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/input_location"
-                android:hint="@string/hint_location" />
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:hint="@string/hint_location"
+                android:dropDownWidth="match_parent"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -46,11 +49,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/design_navigation_separator_vertical_padding">
-            <EditText
+            <AutoCompleteTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/input_destination"
-                android:hint="@string/hint_destination" />
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:hint="@string/hint_destination"
+                android:dropDownWidth="match_parent" />
         </android.support.design.widget.TextInputLayout>
 
     </LinearLayout>

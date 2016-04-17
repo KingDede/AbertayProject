@@ -44,6 +44,7 @@ public class DownloadTask extends AsyncTask<CharSequence, Integer, File> {
     protected void onPreExecute() {
         Log.w( "Webcal", "Start download");
         calendarFile = new File( fileDir, filename );
+        Log.d( "Webcal", "File location : " + calendarFile.getAbsolutePath());
         if ( calendarFile.exists() ) {
             calendarFile.delete();
         }
