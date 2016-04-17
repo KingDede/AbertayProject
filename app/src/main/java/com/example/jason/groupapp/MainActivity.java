@@ -10,7 +10,6 @@ import android.support.design.widget.Snackbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,16 +19,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jason.groupapp.timetable.DatabaseHelper;
@@ -43,15 +35,13 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener/*, View.OnClickListener*/, RadioGroup.OnCheckedChangeListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     private final int ITINERARY_REQUEST = 42;
 
     private TileView tileView1, tileView2, tileView3, tileView4, tileView5;
 
-    private Button btnLevel1, btnLevel2 , btnLevel3, btnLevel4, btnLevel5;
-
-    private RadioGroup radioGroup1;
+    private RadioGroup radioGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,13 +83,13 @@ public class MainActivity extends AppCompatActivity
         tileView4 = (TileView)findViewById(R.id.view4);
         tileView5 = (TileView)findViewById(R.id.view5);
         // ---------- Settings
-        //Set the size of the original image
+        // Set the size of the original image
         tileView1.setSize(2915, 2100);
         tileView2.setSize(2915, 2100);
         tileView3.setSize(2915, 2100);
         tileView4.setSize(2915, 2100);
         tileView5.setSize(2915, 2100);
-        //assign the tile sets to appropriate tileview
+        // assign the tile sets to appropriate tileview
         tileView1.addDetailLevel(1f, "abertaylevel1/%d-%d.png", 485, 350);
         tileView2.addDetailLevel(1f, "abertaylevel2/%d-%d.png", 485, 350);
         tileView3.addDetailLevel(1f, "abertaylevel3/%d-%d.png", 485, 350);
@@ -119,22 +109,13 @@ public class MainActivity extends AppCompatActivity
          * ==========================================
          */
         // ---------- Creation
-      /*  btnLevel1 = (Button) findViewById(R.id.button1);
-        btnLevel2 = (Button) findViewById(R.id.button2);
-        btnLevel3 = (Button) findViewById(R.id.button3);
-        btnLevel4 = (Button) findViewById(R.id.button4);
-        btnLevel5 = (Button) findViewById(R.id.button5);
+        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         // ---------- Adding listeners
-        btnLevel1.setOnClickListener( this );
-        btnLevel2.setOnClickListener( this );
-        btnLevel3.setOnClickListener( this );
-        btnLevel4.setOnClickListener( this );
-        btnLevel5.setOnClickListener( this ); */
+        radioGroup.setOnCheckedChangeListener(this);
         // ---------- End of buttons set-up
 
-        radioGroup1 = (RadioGroup) findViewById(R.id.radioGroup2);
 
-        radioGroup1.setOnCheckedChangeListener(this);
+
 
         /* ==========================================
          *      Nodes set-up
@@ -252,15 +233,6 @@ public class MainActivity extends AppCompatActivity
                         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, metrics)
                 )
         );
-        //tileView1.drawPath(points, null);
-
-//        Path myPath = new Path();
-//        myPath.moveTo(0.25f, 0.75f);
-//        myPath.lineTo(0.35f, 0.76f);
-//        CompositePathView.DrawablePath drawablePath = new CompositePathView.DrawablePath();
-//        drawablePath.path = myPath;
-//        //drawablePath.paint = paint;
-//        tileView.drawPath(drawablePath);
 
     }
 
@@ -354,39 +326,25 @@ public class MainActivity extends AppCompatActivity
                 GregorianCalendar now = (GregorianCalendar) GregorianCalendar.getInstance();
                 String nowString = Event.getDateToString(now);
                 Event nextClass = DatabaseHelper.getInstance(this).getNextEvent(nowString);
-                Snackbar.make(getCurrentFocus(), nextClass.displayClass(), Snackbar.LENGTH_LONG)
+                String message;
+                if ( nextClass != null ) {
+                    message = nextClass.displayClass();
+                } else {
+                    message = "Sorry, you need to upload your timetable to unlock this functionality.";
+                }
+                Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-
-            case R.id.nav_item_fill_data:
-                // ---------- Show Snack bar displaying next class
-                dataSeeder();
-                item.setVisible(false);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-  /*  @Override
+    @Override
     public void onClick(View v) {
 
         int buttonId = v.getId();
         switch (buttonId) {
-            case R.id.button1:
-                displayFloor(1);
-                break;
-            case R.id.button2:
-                displayFloor(2);
-                break;
-            case R.id.button3:
-                displayFloor(3);
-                break;
-            case R.id.button4:
-                displayFloor(4);
-                break;
-            case R.id.button5:
-                displayFloor(5);
-                break;
             case R.id.fab:
                 Intent intent = new Intent(this, ItineraryParametersActivity.class);
                 startActivityForResult(intent, ITINERARY_REQUEST );
@@ -396,7 +354,7 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-    } */
+    }
 
 
     @Override
@@ -404,26 +362,25 @@ public class MainActivity extends AppCompatActivity
     {
         switch (checkedId)
         {
-            case R.id.radioButton6:
+            case R.id.radioButton1:
                 displayFloor(1);
                 break;
-            case R.id.radioButton7:
+            case R.id.radioButton2:
                 displayFloor(2);
                 break;
-            case R.id.radioButton8:
+            case R.id.radioButton3:
                 displayFloor(3);
                 break;
-            case R.id.radioButton9:
+            case R.id.radioButton4:
                 displayFloor(4);
                 break;
-            case R.id.radioButton10:
+            case R.id.radioButton5:
                 displayFloor(5);
                 break;
             default:
                 break;
         }
     }
-
 
     private void displayFloor( int number ) {
         tileView1.setVisibility(View.GONE);
@@ -466,56 +423,6 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
         }
-    }
-
-
-    private void dataSeeder () {
-
-        ArrayList<Event> classes = new ArrayList<Event>();
-
-    /*    GregorianCalendar dateStart
-        GregorianCalendar dateEnd
-        String location
-        String className
-        String classType
-        String teacherSurname
-        String teacherFirstname*/
-
-        // Group project - practical
-        classes.add( new Event( Event.getStringToDate("2016-04-12 08:00:00"),Event.getStringToDate("2016-04-12 10:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Group Project", "Practical", "ARCHIBALD", "JACKIE" ) );
-        classes.add( new Event( Event.getStringToDate("2016-04-19 08:00:00"),Event.getStringToDate("2016-04-19 10:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Group Project", "Practical", "ARCHIBALD", "JACKIE" ) );
-        // Server-side web development - Practical
-        classes.add( new Event( Event.getStringToDate("2016-04-11 12:00:00"),Event.getStringToDate("2016-04-11 14:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Server-Side Web Development", "Practical", "LUND", "GEOFFREY" ) );
-        classes.add( new Event( Event.getStringToDate("2016-04-18 12:00:00"),Event.getStringToDate("2016-04-18 14:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Server-Side Web Development", "Practical", "LUND", "GEOFFREY" ) );
-        classes.add( new Event( Event.getStringToDate("2016-04-25 12:00:00"),Event.getStringToDate("2016-04-25 14:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Server-Side Web Development", "Practical", "LUND", "GEOFFREY" ) );
-        // Server-side web development - Lecture
-        classes.add( new Event( Event.getStringToDate("2016-04-11 09:00:00"),Event.getStringToDate("2016-04-11 10:00:00"), "3006", "Server-Side Web Development", "Lecture", "LUND", "GEOFFREY" ) );
-        classes.add( new Event( Event.getStringToDate("2016-04-18 09:00:00"),Event.getStringToDate("2016-04-18 10:00:00"), "3006", "Server-Side Web Development", "Lecture", "LUND", "GEOFFREY" ) );
-        classes.add( new Event( Event.getStringToDate("2016-04-25 09:00:00"),Event.getStringToDate("2016-04-25 10:00:00"), "3006", "Server-Side Web Development", "Lecture", "LUND", "GEOFFREY" ) );
-        // AI - Practical
-        classes.add( new Event( Event.getStringToDate("2016-04-14 12:00:00"),Event.getStringToDate("2016-04-14 14:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Practical", "KING", "DAVID J" ) );
-        classes.add( new Event( Event.getStringToDate("2016-04-21 12:00:00"),Event.getStringToDate("2016-04-21 14:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Practical", "KING", "DAVID J" ) );
-        // AI - Lecture
-        classes.add( new Event( Event.getStringToDate("2016-04-11 10:00:00"),Event.getStringToDate("2016-04-11 11:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Lecture", "KING", "DAVID J" ) );
-        classes.add( new Event( Event.getStringToDate("2016-04-18 10:00:00"),Event.getStringToDate("2016-04-18 11:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Lecture", "KING", "DAVID J" ) );
-        classes.add( new Event( Event.getStringToDate("2016-04-25 10:00:00"),Event.getStringToDate("2016-04-25 11:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Lecture", "KING", "DAVID J" ) );
-        // Network Programming for Mobile Technology - Lecture
-        classes.add( new Event( Event.getStringToDate("2016-04-12 10:00:00"),Event.getStringToDate("2016-04-12 11:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Lecture", "BOIKO", "ANDREI" ) );
-        classes.add( new Event( Event.getStringToDate("2016-04-19 10:00:00"),Event.getStringToDate("2016-04-19 11:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Lecture", "BOIKO", "ANDREI" ) );
-        // Network Programming for Mobile Technology - Practical
-        classes.add( new Event( Event.getStringToDate("2016-04-12 14:00:00"),Event.getStringToDate("2016-04-12 16:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Practical", "BOIKO", "ANDREI" ) );
-        classes.add( new Event( Event.getStringToDate("2016-04-19 14:00:00"),Event.getStringToDate("2016-04-19 16:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Practical", "BOIKO", "ANDREI" ) );
-        classes.add( new Event( Event.getStringToDate("2016-04-26 14:00:00"),Event.getStringToDate("2016-04-26 16:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Practical", "BOIKO", "ANDREI" ) );
-
-
-        DatabaseHelper db = DatabaseHelper.getInstance(this);
-        for (int i = 0; i < classes.size(); i++ ) {
-            db.addEvent(classes.get(i));
-            Log.w("ADDED", classes.get(i).displayClass());
-        }
-
-
-
     }
 
 }

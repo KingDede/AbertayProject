@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Floor levels">
+    <!-- <item android:title="Floor levels">
         <menu>
             <group android:checkableBehavior="single">
                 <item
@@ -26,7 +26,7 @@
                     android:title="Level 5" />
             </group>
         </menu>
-    </item>
+    </item> -->
 
     <item
         android:id="@+id/nav_item_sync"
@@ -37,10 +37,5 @@
         android:id="@+id/nav_item_next"
         android:icon="@drawable/ic_next_class"
         android:title="See your next class" />
-
-    <item
-        android:id="@+id/nav_item_fill_data"
-        android:icon="@drawable/ic_add_data"
-        android:title="Insert data" />
 
 </menu>

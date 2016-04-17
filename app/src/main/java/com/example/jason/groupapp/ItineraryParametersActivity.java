@@ -69,7 +69,7 @@ public class ItineraryParametersActivity extends AppCompatActivity implements Vi
          * ==========================================
          */
         // ---------- Initialisation
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.select_dialog_singlechoice, rooms);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.select_dialog_item, rooms);
         tvLocation.setThreshold(1);
         tvDestination.setThreshold(1);
         tvLocation.setAdapter(adapter);

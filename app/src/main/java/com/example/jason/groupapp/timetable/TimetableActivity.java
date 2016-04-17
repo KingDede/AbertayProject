@@ -1,6 +1,7 @@
 package com.example.jason.groupapp.timetable;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -64,8 +65,8 @@ public class TimetableActivity extends AppCompatActivity implements View.OnClick
             CharSequence URL = textURL.getText();
             if (URL.length() > 0) {
                 if (!URL.toString().startsWith("webcal://")) {
-                    File fileDir = getApplicationContext().getFilesDir();//getCacheDir();
-                    Log.e("Caldendar", fileDir.toString());
+                    File fileDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);//getApplicationContext().getExternalFilesDir( null );//getCacheDir();
+                    Log.e("Calendar", fileDir.toString());
                     try {
                         fab.setVisibility(View.GONE);
                         new DownloadTask(v.getContext(), fileDir, progressBar).execute("http://" + URL).get();

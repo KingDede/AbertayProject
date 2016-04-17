@@ -32,4 +32,73 @@
         android:src="@drawable/ic_directions" />
     <!-- android:src="@android:drawable/stat_notify_sync" -->
 
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/fab_margin"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioButton1"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/rbtn_selector"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="1"
+            android:textColor="@drawable/rbtn_textcolor_selector" />
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/rbtn_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="2"
+            android:textColor="@drawable/rbtn_textcolor_selector"
+            android:checked="false" />
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/rbtn_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="3"
+            android:textColor="@drawable/rbtn_textcolor_selector"
+            android:checked="false" />
+
+        <RadioButton
+            android:id="@+id/radioButton4"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/rbtn_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="4"
+            android:textColor="@drawable/rbtn_textcolor_selector"
+            android:checked="false" />
+
+        <RadioButton
+            android:id="@+id/radioButton5"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/rbtn_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="5"
+            android:textColor="@drawable/rbtn_textcolor_selector"
+            android:checked="false" />
+    </RadioGroup>
+
 </android.support.design.widget.CoordinatorLayout>

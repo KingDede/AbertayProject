@@ -43,6 +43,9 @@ public class RegexTask extends AsyncTask<File, Integer, Void> {
     @Override
     protected void onPreExecute() {
         Log.w("Regex", "Start");
+        // clearing previous data in database
+        DatabaseHelper DB = DatabaseHelper.getInstance( context );
+        DB.cleanData();
         progressBar.setProgress(0);
     }
 
@@ -58,7 +61,7 @@ public class RegexTask extends AsyncTask<File, Integer, Void> {
             // fetching data from file
             CalendarReader calReader = new CalendarReader( calendarFile );
             Log.w("Regex", "Start of reading file");
-            ArrayList<Event> classes = new ArrayList<Event>(); // TODO
+            ArrayList<Event> classes = calReader.dataSeeder(); // TODO
             //ArrayList<Event> classes = calReader.readCalendar();
             Log.w("Regex", "End of reading file");
             // storing data in database
@@ -67,9 +70,11 @@ public class RegexTask extends AsyncTask<File, Integer, Void> {
             progressData[0] = classes.size();
             for ( int i = 0; i < classes.size(); i++ ) {
                 DB.addEvent( classes.get( i ) );
+                Log.w("ADDED", classes.get(i).displayClass());
                 progressData[1] = i;
                 publishProgress(progressData);
             }
+
             // deleting file
             calendarFile.delete();
             Log.w("Regex", "Completed");
@@ -332,6 +337,50 @@ public class RegexTask extends AsyncTask<File, Integer, Void> {
 
         }
 
+
+
+        private ArrayList<Event> dataSeeder () {
+
+            ArrayList<Event> classes = new ArrayList<Event>();
+
+    /*    GregorianCalendar dateStart
+        GregorianCalendar dateEnd
+        String location
+        String className
+        String classType
+        String teacherSurname
+        String teacherFirstname*/
+
+            // Group project - practical
+            classes.add( new Event( Event.getStringToDate("2016-04-12 08:00:00"),Event.getStringToDate("2016-04-12 10:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Group Project", "Practical", "ARCHIBALD", "JACKIE" ) );
+            classes.add( new Event( Event.getStringToDate("2016-04-19 08:00:00"),Event.getStringToDate("2016-04-19 10:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Group Project", "Practical", "ARCHIBALD", "JACKIE" ) );
+            // Server-side web development - Practical
+            classes.add( new Event( Event.getStringToDate("2016-04-11 12:00:00"),Event.getStringToDate("2016-04-11 14:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Server-Side Web Development", "Practical", "LUND", "GEOFFREY" ) );
+            classes.add( new Event( Event.getStringToDate("2016-04-18 12:00:00"),Event.getStringToDate("2016-04-18 14:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Server-Side Web Development", "Practical", "LUND", "GEOFFREY" ) );
+            classes.add( new Event( Event.getStringToDate("2016-04-25 12:00:00"),Event.getStringToDate("2016-04-25 14:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Server-Side Web Development", "Practical", "LUND", "GEOFFREY" ) );
+            // Server-side web development - Lecture
+            classes.add( new Event( Event.getStringToDate("2016-04-11 09:00:00"),Event.getStringToDate("2016-04-11 10:00:00"), "3006", "Server-Side Web Development", "Lecture", "LUND", "GEOFFREY" ) );
+            classes.add( new Event( Event.getStringToDate("2016-04-18 09:00:00"),Event.getStringToDate("2016-04-18 10:00:00"), "3006", "Server-Side Web Development", "Lecture", "LUND", "GEOFFREY" ) );
+            classes.add( new Event( Event.getStringToDate("2016-04-25 09:00:00"),Event.getStringToDate("2016-04-25 10:00:00"), "3006", "Server-Side Web Development", "Lecture", "LUND", "GEOFFREY" ) );
+            // AI - Practical
+            classes.add( new Event( Event.getStringToDate("2016-04-14 12:00:00"),Event.getStringToDate("2016-04-14 14:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Practical", "KING", "DAVID J" ) );
+            classes.add( new Event( Event.getStringToDate("2016-04-21 12:00:00"),Event.getStringToDate("2016-04-21 14:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Practical", "KING", "DAVID J" ) );
+            // AI - Lecture
+            classes.add( new Event( Event.getStringToDate("2016-04-11 10:00:00"),Event.getStringToDate("2016-04-11 11:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Lecture", "KING", "DAVID J" ) );
+            classes.add( new Event( Event.getStringToDate("2016-04-18 10:00:00"),Event.getStringToDate("2016-04-18 11:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Lecture", "KING", "DAVID J" ) );
+            classes.add( new Event( Event.getStringToDate("2016-04-25 10:00:00"),Event.getStringToDate("2016-04-25 11:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Lecture", "KING", "DAVID J" ) );
+            // Network Programming for Mobile Technology - Lecture
+            classes.add( new Event( Event.getStringToDate("2016-04-12 10:00:00"),Event.getStringToDate("2016-04-12 11:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Lecture", "BOIKO", "ANDREI" ) );
+            classes.add( new Event( Event.getStringToDate("2016-04-19 10:00:00"),Event.getStringToDate("2016-04-19 11:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Lecture", "BOIKO", "ANDREI" ) );
+            // Network Programming for Mobile Technology - Practical
+            classes.add( new Event( Event.getStringToDate("2016-04-12 14:00:00"),Event.getStringToDate("2016-04-12 16:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Practical", "BOIKO", "ANDREI" ) );
+            classes.add( new Event( Event.getStringToDate("2016-04-19 14:00:00"),Event.getStringToDate("2016-04-19 16:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Practical", "BOIKO", "ANDREI" ) );
+            classes.add( new Event( Event.getStringToDate("2016-04-26 14:00:00"),Event.getStringToDate("2016-04-26 16:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Practical", "BOIKO", "ANDREI" ) );
+
+            return classes;
+        }
     }
+
+
 }
 

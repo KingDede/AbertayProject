@@ -121,6 +121,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return events;
     }
 
+    public int cleanData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Returns the number of affected rows. 0 means no rows were deleted.
+        return db.delete(EVENTS_TABLE_NAME, null, null);
+    }
+
     public int removeEvent(Event e){
         SQLiteDatabase db = this.getWritableDatabase();
         String whereClause = this.COLUMN_NAMES[0] + " = '" + Event.getDateToString( e.getDateStart() ) +
