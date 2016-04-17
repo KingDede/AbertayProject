@@ -44,6 +44,7 @@ public class DownloadTask extends AsyncTask<CharSequence, Integer, File> {
     protected void onPreExecute() {
         Log.w( "Webcal", "Start download");
         calendarFile = new File( fileDir, filename );
+        Log.d( "Webcal", "File location : " + calendarFile.getAbsolutePath());
         if ( calendarFile.exists() ) {
             calendarFile.delete();
         }
@@ -76,7 +77,7 @@ public class DownloadTask extends AsyncTask<CharSequence, Integer, File> {
             InputStream input = new BufferedInputStream(url.openStream(), 8192);
             // Output stream to write file
             OutputStream output = new FileOutputStream(calendarFile);
-            byte dataBuffer[] = new byte[1024];
+            byte dataBuffer[] = new byte[1024]; //
 
             int total = 0;
             while ( (count = input.read(dataBuffer)) != -1 ) {

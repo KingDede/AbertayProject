@@ -62,7 +62,7 @@ public class RegexTask extends AsyncTask<File, Integer, Void> {
             //ArrayList<Event> classes = calReader.readCalendar();
             Log.w("Regex", "End of reading file");
             // storing data in database
-            DatabaseHelper DB = new DatabaseHelper( context );
+            DatabaseHelper DB = DatabaseHelper.getInstance( context );
             Integer[] progressData = new Integer[ 2 ];
             progressData[0] = classes.size();
             for ( int i = 0; i < classes.size(); i++ ) {

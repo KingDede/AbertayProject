@@ -49,6 +49,8 @@
 
 
 
+
+<!--
     <AutoCompleteTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,7 +72,8 @@
         android:imeOptions="actionDone"
         android:hint="Enter your destination"
         android:visibility="gone"
-        android:dropDownWidth="match_parent" />
+        android:dropDownWidth="match_parent" /> -->
+
 
     <RadioGroup
         android:id="@+id/radioGroup2"

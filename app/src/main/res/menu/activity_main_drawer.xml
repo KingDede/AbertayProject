@@ -6,11 +6,11 @@
             <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/nav_item1"
-                    android:icon="@android:drawable/ic_dialog_map"
+                    android:icon="@drawable/ic_floor1"
                     android:title="Level 1" />
                 <item
                     android:id="@+id/nav_item2"
-                    android:icon="@android:drawable/ic_dialog_map"
+                    android:icon="@drawable/ic_floor2"
                     android:title="Level 2" />
                 <item
                     android:id="@+id/nav_item3"
@@ -18,11 +18,11 @@
                     android:title="Level 3" />
                 <item
                     android:id="@+id/nav_item4"
-                    android:icon="@android:drawable/ic_dialog_map"
+                    android:icon="@drawable/ic_map"
                     android:title="Level 4" />
                 <item
                     android:id="@+id/nav_item5"
-                    android:icon="@android:drawable/ic_dialog_map"
+                    android:icon="@drawable/ic_layers"
                     android:title="Level 5" />
             </group>
         </menu>
@@ -30,12 +30,17 @@
 
     <item
         android:id="@+id/nav_item_sync"
-        android:icon="@android:drawable/ic_menu_my_calendar"
+        android:icon="@drawable/ic_timetable"
         android:title="Add your timetable" />
 
     <item
         android:id="@+id/nav_item_next"
-        android:icon="@android:drawable/ic_menu_info_details"
+        android:icon="@drawable/ic_next_class"
         android:title="See your next class" />
+
+    <item
+        android:id="@+id/nav_item_fill_data"
+        android:icon="@drawable/ic_add_data"
+        android:title="Insert data" />
 
 </menu>

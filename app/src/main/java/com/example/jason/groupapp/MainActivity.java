@@ -32,11 +32,14 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jason.groupapp.timetable.DatabaseHelper;
+import com.example.jason.groupapp.timetable.Event;
 import com.example.jason.groupapp.timetable.TimetableActivity;
 import com.qozix.tileview.TileView;
 import com.qozix.tileview.paths.CompositePathView;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         // ---------- FloatingActionButton
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener( this );
         // ---------- Navigation drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -139,16 +143,16 @@ public class MainActivity extends AppCompatActivity
         NodePath nPath = new NodePath(this.getApplicationContext());
         List<String> rooms = nPath.getAllRooms();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.select_dialog_singlechoice, rooms);
 
         /* ==========================================
          *      Auto complete panel set-up
          * ==========================================
          */
-        // ---------- Creation
+/*        // ---------- Creation
         final AutoCompleteTextView textStart = (AutoCompleteTextView) findViewById(R.id.textStart);
         final AutoCompleteTextView textEnd = (AutoCompleteTextView) findViewById(R.id.textEnd);
         // ---------- Initialisation
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.select_dialog_singlechoice, rooms);
         textStart.setThreshold(1);
         textEnd.setThreshold(1);
         textStart.setAdapter(adapter);
@@ -204,7 +208,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 return false;
             }
-        });
+        }); */
         // ---------- End of auto complete panel set-up
 
 
@@ -328,8 +332,6 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Toast.makeText(MainActivity.this, "Settings selected", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, ItineraryParametersActivity.class);
-            startActivityForResult(intent, ITINERARY_REQUEST );
             return true;
         }
 
@@ -348,8 +350,17 @@ public class MainActivity extends AppCompatActivity
                 startActivity( intent );
                 break;
             case R.id.nav_item_next:
-                Snackbar.make(getCurrentFocus(), "Your next class is ...", Snackbar.LENGTH_LONG)
+                // ---------- Show Snack bar displaying next class
+                GregorianCalendar now = (GregorianCalendar) GregorianCalendar.getInstance();
+                String nowString = Event.getDateToString(now);
+                Event nextClass = DatabaseHelper.getInstance(this).getNextEvent(nowString);
+                Snackbar.make(getCurrentFocus(), nextClass.displayClass(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+            case R.id.nav_item_fill_data:
+                // ---------- Show Snack bar displaying next class
+                dataSeeder();
+                item.setVisible(false);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -375,6 +386,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.button5:
                 displayFloor(5);
+                break;
+            case R.id.fab:
+                Intent intent = new Intent(this, ItineraryParametersActivity.class);
+                startActivityForResult(intent, ITINERARY_REQUEST );
                 break;
             default:
                 break;
@@ -446,10 +461,61 @@ public class MainActivity extends AppCompatActivity
                     String location = res.getString("loc");
                     String destination = res.getString("dest");
                     Log.d( "Result", "location: " + location + " - destination: " + destination );
+                    Toast.makeText(MainActivity.this, "Start = " + location + " ~ End = " + destination , Toast.LENGTH_SHORT).show();
+                    drawPath( location, destination);
                 }
                 break;
         }
     }
 
+
+    private void dataSeeder () {
+
+        ArrayList<Event> classes = new ArrayList<Event>();
+
+    /*    GregorianCalendar dateStart
+        GregorianCalendar dateEnd
+        String location
+        String className
+        String classType
+        String teacherSurname
+        String teacherFirstname*/
+
+        // Group project - practical
+        classes.add( new Event( Event.getStringToDate("2016-04-12 08:00:00"),Event.getStringToDate("2016-04-12 10:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Group Project", "Practical", "ARCHIBALD", "JACKIE" ) );
+        classes.add( new Event( Event.getStringToDate("2016-04-19 08:00:00"),Event.getStringToDate("2016-04-19 10:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Group Project", "Practical", "ARCHIBALD", "JACKIE" ) );
+        // Server-side web development - Practical
+        classes.add( new Event( Event.getStringToDate("2016-04-11 12:00:00"),Event.getStringToDate("2016-04-11 14:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Server-Side Web Development", "Practical", "LUND", "GEOFFREY" ) );
+        classes.add( new Event( Event.getStringToDate("2016-04-18 12:00:00"),Event.getStringToDate("2016-04-18 14:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Server-Side Web Development", "Practical", "LUND", "GEOFFREY" ) );
+        classes.add( new Event( Event.getStringToDate("2016-04-25 12:00:00"),Event.getStringToDate("2016-04-25 14:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Server-Side Web Development", "Practical", "LUND", "GEOFFREY" ) );
+        // Server-side web development - Lecture
+        classes.add( new Event( Event.getStringToDate("2016-04-11 09:00:00"),Event.getStringToDate("2016-04-11 10:00:00"), "3006", "Server-Side Web Development", "Lecture", "LUND", "GEOFFREY" ) );
+        classes.add( new Event( Event.getStringToDate("2016-04-18 09:00:00"),Event.getStringToDate("2016-04-18 10:00:00"), "3006", "Server-Side Web Development", "Lecture", "LUND", "GEOFFREY" ) );
+        classes.add( new Event( Event.getStringToDate("2016-04-25 09:00:00"),Event.getStringToDate("2016-04-25 10:00:00"), "3006", "Server-Side Web Development", "Lecture", "LUND", "GEOFFREY" ) );
+        // AI - Practical
+        classes.add( new Event( Event.getStringToDate("2016-04-14 12:00:00"),Event.getStringToDate("2016-04-14 14:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Practical", "KING", "DAVID J" ) );
+        classes.add( new Event( Event.getStringToDate("2016-04-21 12:00:00"),Event.getStringToDate("2016-04-21 14:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Practical", "KING", "DAVID J" ) );
+        // AI - Lecture
+        classes.add( new Event( Event.getStringToDate("2016-04-11 10:00:00"),Event.getStringToDate("2016-04-11 11:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Lecture", "KING", "DAVID J" ) );
+        classes.add( new Event( Event.getStringToDate("2016-04-18 10:00:00"),Event.getStringToDate("2016-04-18 11:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Lecture", "KING", "DAVID J" ) );
+        classes.add( new Event( Event.getStringToDate("2016-04-25 10:00:00"),Event.getStringToDate("2016-04-25 11:00:00"), "4506 Pods H - K", "Decision Support Systems ~ Intelligent Systems", "Lecture", "KING", "DAVID J" ) );
+        // Network Programming for Mobile Technology - Lecture
+        classes.add( new Event( Event.getStringToDate("2016-04-12 10:00:00"),Event.getStringToDate("2016-04-12 11:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Lecture", "BOIKO", "ANDREI" ) );
+        classes.add( new Event( Event.getStringToDate("2016-04-19 10:00:00"),Event.getStringToDate("2016-04-19 11:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Lecture", "BOIKO", "ANDREI" ) );
+        // Network Programming for Mobile Technology - Practical
+        classes.add( new Event( Event.getStringToDate("2016-04-12 14:00:00"),Event.getStringToDate("2016-04-12 16:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Practical", "BOIKO", "ANDREI" ) );
+        classes.add( new Event( Event.getStringToDate("2016-04-19 14:00:00"),Event.getStringToDate("2016-04-19 16:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Practical", "BOIKO", "ANDREI" ) );
+        classes.add( new Event( Event.getStringToDate("2016-04-26 14:00:00"),Event.getStringToDate("2016-04-26 16:00:00"), "4506 Pods A - G ~ 4506 Pods H - K", "Network Programming for Mobile Technology", "Practical", "BOIKO", "ANDREI" ) );
+
+
+        DatabaseHelper db = DatabaseHelper.getInstance(this);
+        for (int i = 0; i < classes.size(); i++ ) {
+            db.addEvent(classes.get(i));
+            Log.w("ADDED", classes.get(i).displayClass());
+        }
+
+
+
+    }
 
 }
