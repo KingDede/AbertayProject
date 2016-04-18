@@ -30,12 +30,10 @@
 
     <item
         android:id="@+id/nav_item_sync"
-        android:icon="@drawable/ic_timetable"
         android:title="Add your timetable" />
 
     <item
         android:id="@+id/nav_item_next"
-        android:icon="@drawable/ic_next_class"
         android:title="See your next class" />
 
 </menu>

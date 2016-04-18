@@ -101,6 +101,18 @@ public class MainActivity extends AppCompatActivity
         tileView3.defineBounds(0, 0, 2915, 2100);
         tileView4.defineBounds(0, 0, 2915, 2100);
         tileView5.defineBounds(0, 0, 2915, 2100);
+        // Speed up the tile rendering
+        tileView1.setShouldRenderWhilePanning(true);
+        tileView2.setShouldRenderWhilePanning(true);
+        tileView3.setShouldRenderWhilePanning(true);
+        tileView4.setShouldRenderWhilePanning(true);
+        tileView5.setShouldRenderWhilePanning(true);
+        //set the scale for the tileviews
+        tileView1.setScale(0.5f);
+        tileView2.setScale(0.5f);
+        tileView3.setScale(0.5f);
+        tileView4.setScale(0.5f);
+        tileView5.setScale(0.5f);
         // ---------- End of image set-up
 
 
@@ -197,13 +209,13 @@ public class MainActivity extends AppCompatActivity
          *      Pin markers set-up
          * ==========================================
          */
-        ImageView imageView = new ImageView( this );
-        imageView.setImageResource(R.drawable.blue_empty);
-        tileView1.addMarker(imageView, 620, 1815, -0.5f, -1.0f);
-
-        ImageView imageView2 = new ImageView( this );
-        imageView2.setImageResource(R.drawable.red_empty);
-        tileView1.addMarker(imageView2, 1195, 1530, -0.5f, -1.0f);
+//        ImageView imageView = new ImageView( this );
+//        imageView.setImageResource(R.drawable.blue_empty);
+//        tileView1.addMarker(imageView, 620, 1815, -0.5f, -1.0f);
+//
+//        ImageView imageView2 = new ImageView( this );
+//        imageView2.setImageResource(R.drawable.red_empty);
+//        tileView1.addMarker(imageView2, 1195, 1530, -0.5f, -1.0f);
 
         /* ==========================================
          *      TODO
@@ -233,6 +245,7 @@ public class MainActivity extends AppCompatActivity
                         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, metrics)
                 )
         );
+        paint.setColor(0xFF33B5E5);
 
     }
 
@@ -272,12 +285,80 @@ public class MainActivity extends AppCompatActivity
             points.add( new double[] {startPosX, startPosY} );
             points.add(new double[]{endPosX, endPosY});
         }
-        //points.addAll(nPath.generatePath(startPosX, startPosY, endPosX, endPosY));
+        points.addAll(nPath.generatePath(startPosX, startPosY, endPosX, endPosY));
 
         return points;
     }
 
-    @Override
+    public List<double[]> drawPathDemo (String start, String end) {
+
+
+
+        List<double[]> points1 = new ArrayList<>();
+        {
+            points1.add(new double[]{1267,1992 });
+            points1.add(new double[]{1258,1953 });
+            points1.add(new double[]{1230,1813 });
+            points1.add(new double[]{1330,1813 });
+
+        }
+
+        List<double[]> points2 = new ArrayList<>();
+        {
+            points2.add(new double[]{1337,1767 });
+            points2.add(new double[]{1240,1767 });
+            points2.add(new double[]{1240,1725 });
+            points2.add(new double[]{1562,1713 });
+            points2.add(new double[]{1589,1746 });
+            points2.add(new double[]{1676,1750 });
+
+        }
+
+        List<double[]> points3 = new ArrayList<>();
+        {
+            points3.add(new double[]{1688,1754 });
+            points3.add(new double[]{1762,1759 });
+            points3.add(new double[]{1783,1713 });
+            points3.add(new double[]{1576,1713 });
+            points3.add(new double[]{1576,1747 });
+            points3.add(new double[]{1644,1750 });
+
+        }
+
+        List<double[]> points4 = new ArrayList<>();
+        {
+            points4.add(new double[]{1690,1751 });
+            points4.add(new double[]{1768,1756 });
+            points4.add(new double[]{1767,1709 });
+            points4.add(new double[]{1567,1709 });
+            points4.add(new double[]{1529,1709 });
+            points4.add(new double[]{1220,1709 });
+            points4.add(new double[]{1197,1808 });
+            points4.add(new double[]{1021,1808 });
+            points4.add(new double[]{973,1808 });
+            points4.add(new double[]{960,1851 });
+            points4.add(new double[]{922,1851 });
+            points4.add(new double[]{920,1885 });
+
+        }
+
+        switch (start){
+            case "1"
+                    : return points1;
+            case "2"
+                    : return points2;
+            case "3"
+                    : return points3;
+            case "4"
+                    : return points4;
+            default
+                    : return null;
+        }
+
+
+    }
+
+        @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -286,6 +367,8 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -419,7 +502,45 @@ public class MainActivity extends AppCompatActivity
                     String destination = res.getString("dest");
                     Log.d( "Result", "location: " + location + " - destination: " + destination );
                     Toast.makeText(MainActivity.this, "Start = " + location + " ~ End = " + destination , Toast.LENGTH_SHORT).show();
-                    drawPath( location, destination);
+                    //drawPath( location, destination);
+                    //tileView4.drawPath(drawPath( location, destination), null);
+                    tileView1.drawPath((drawPathDemo("1","end")), null);
+                    tileView2.drawPath((drawPathDemo("2", "end")), tileView1.getDefaultPathPaint());
+                    tileView3.drawPath((drawPathDemo("3", "end")), tileView1.getDefaultPathPaint());
+                    tileView4.drawPath((drawPathDemo("4", "end")), tileView1.getDefaultPathPaint());
+                    //tileView1.scrollToAndCenter(1267, 1992);
+
+                    ImageView imageView = new ImageView(this);
+                    imageView.setImageResource(R.drawable.blue_empty);
+                    tileView1.addMarker(imageView, 1267, 1992, -0.5f, -1.0f);
+
+                    ImageView imageView2 = new ImageView(this);
+                    imageView2.setImageResource(R.drawable.red_empty);
+                    tileView1.addMarker(imageView2, 1330, 1813, -0.5f, -1.0f);
+
+                    ImageView imageView3 = new ImageView(this);
+                    imageView3.setImageResource(R.drawable.blue_empty);
+                    tileView2.addMarker(imageView3, 1337,1767, -0.5f, -1.0f);
+
+                    ImageView imageView4 = new ImageView(this);
+                    imageView4.setImageResource(R.drawable.red_empty);
+                    tileView2.addMarker(imageView4, 1676,1750, -0.5f, -1.0f);
+
+                    ImageView imageView5 = new ImageView(this);
+                    imageView5.setImageResource(R.drawable.blue_empty);
+                    tileView3.addMarker(imageView5, 1688,1745, -0.5f, -1.0f);
+
+                    ImageView imageView6 = new ImageView(this);
+                    imageView6.setImageResource(R.drawable.red_empty);
+                    tileView3.addMarker(imageView6,1644,1750 , -0.5f, -1.0f);
+
+                    ImageView imageView7 = new ImageView(this);
+                    imageView7.setImageResource(R.drawable.blue_empty);
+                    tileView4.addMarker(imageView7,1690,1751 , -0.5f, -1.0f);
+
+                    ImageView imageView8 = new ImageView(this);
+                    imageView8.setImageResource(R.drawable.red_empty);
+                    tileView4.addMarker(imageView8,920,1885 , -0.5f, -1.0f);
                 }
                 break;
         }
