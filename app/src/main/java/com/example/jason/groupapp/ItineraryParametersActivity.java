@@ -17,12 +17,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItineraryParametersActivity extends AppCompatActivity implements View.OnClickListener {
 
     private AutoCompleteTextView tvLocation, tvDestination;
     private Button btnCancel, btnOk;
+    List<String> rooms = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,7 @@ public class ItineraryParametersActivity extends AppCompatActivity implements Vi
          * ==========================================
          */
         NodePath nPath = new NodePath(this.getApplicationContext());
-        List<String> rooms = nPath.getAllRooms();
+        rooms = nPath.getAllRooms();
 
         /* ==========================================
          *      Auto complete panel set-up
@@ -93,6 +95,10 @@ public class ItineraryParametersActivity extends AppCompatActivity implements Vi
                 String destination = tvDestination.getText().toString();
                 if ( location.isEmpty() || destination.isEmpty() ) {
                     Snackbar.make(v, "Please fill both fields", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+                else if ( !rooms.contains(location) || !rooms.contains(destination) ) {
+                    Snackbar.make(v, "Must be valid room name", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 } else {
                     Bundle parameters = new Bundle();

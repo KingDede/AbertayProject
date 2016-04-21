@@ -55,21 +55,40 @@ public class NodePath {
         return nodeList;
     }
 
-    /*
-        TODO
-        this makes the app freeze maybe try using another thread or something
-     */
+
     public List<double[]> generatePath (double startPosX, double startPosY, double endPosX, double endPosY)
     {
         List<String[]> nodeInfo = new ArrayList<>();
         nodeInfo.addAll(parseCSV("floor_4_paths"));
         List<double[]> paths4 = new ArrayList<>();
-        double[] nodes = new double[3];
         for (String[] curVal : nodeInfo) {
+            double[] nodes = new double[3];
             nodes[0] = Double.parseDouble(curVal[1]);
             nodes[1] = Double.parseDouble(curVal[2]);
             paths4.add(nodes);
         }
+        Log.e("start and end points", "Start node: " + startPosX + " " + startPosY + " End Node: " + endPosX + " " + endPosY);
+
+        double finalNode[] = {0, 0};
+        double shortDistEnd = Double.MAX_VALUE;
+        for (double[] curVal : paths4) {
+            double dist = (Math.sqrt(Math.pow(endPosX - curVal[0], 2) + Math.pow(endPosY - curVal[1], 2)));
+            if (dist != 0 && dist < shortDistEnd){
+                shortDistEnd = dist;
+                finalNode[0] = curVal[0];
+                finalNode[1] = curVal[1];
+            }
+            Log.e("curval values", "Curval X: " + curVal[0] + " Y: " + curVal[1]);
+            Log.e("within for loop",
+                    "Active node X: "+ finalNode[0] +
+                            " Y: " + finalNode[1] +
+                            " Curval Node X: " + curVal[0] +
+                            " Y: " + curVal[1]+
+                            " Distance: " +dist+ 
+                            " ShortDist: " +shortDistEnd);
+        }
+
+        Log.e("final node", "X: " + finalNode[0] + " Y: " + finalNode[1]);
 
         List<double[]> genPath = new ArrayList<>();
         Boolean path = Boolean.FALSE;
@@ -78,7 +97,7 @@ public class NodePath {
         while (path != Boolean.TRUE)
         {
             double curNode[] = {startPosX, startPosY};
-            double shortDist = 100.0;
+            double shortDist = Double.MAX_VALUE;
 
             for (double[] curVal : paths4) {
                 double dist = (Math.sqrt(Math.pow(activeNode[0] - curVal[0], 2) + Math.pow(activeNode[1] - curVal[1], 2)));
@@ -87,12 +106,29 @@ public class NodePath {
                     curNode[0] = curVal[0];
                     curNode[1] = curVal[1];
                 }
+                Log.e("within for loop",
+                        "Active node X: "+ activeNode[0]+" Y: " + activeNode[1] +
+                                " Curval Node X: " + curVal[0] + " Y: " + curVal[1]+
+                                " Curnode Node X: " + curNode[0] + " Y: " + curNode[1]+
+                                " Distance: " +dist+
+                                " ShortDist: " +shortDist);
             }
             activeNode[0] = curNode[0];
             activeNode[1] = curNode[1];
-            genPath.add(activeNode);
+            double[] points = new double[2];
+            points[0] = activeNode[0];
+            points[1] = activeNode[1];
+            genPath.add(points);
 
-            if (activeNode[0] == endPosX && activeNode[1] == endPosY){
+            for (int i = 0; i < paths4.size(); i++) {
+                if (paths4.get(i)[0] == activeNode[0] && paths4.get(i)[1] == activeNode[1]) {
+                    paths4.remove(i);
+                }
+            }
+
+
+            if (activeNode[0] == finalNode[0] && activeNode[1] == finalNode[1]){
+                Log.e("exit while loop", "Active node X: "+ activeNode[0]+" Y: " + activeNode[1] + "Target Node X: " + finalNode[0] + " Y: " + finalNode[1]);
                 path = Boolean.TRUE;
             }
         }

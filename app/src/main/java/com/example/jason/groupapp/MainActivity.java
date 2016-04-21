@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity
 
     private RadioGroup radioGroup;
 
+    ImageView imageView = null;
+    ImageView imageView2 = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -71,6 +74,9 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        imageView = new ImageView(this);
+        imageView2 = new ImageView(this);
 
         /* ==========================================
          *      Image set-up
@@ -101,6 +107,18 @@ public class MainActivity extends AppCompatActivity
         tileView3.defineBounds(0, 0, 2915, 2100);
         tileView4.defineBounds(0, 0, 2915, 2100);
         tileView5.defineBounds(0, 0, 2915, 2100);
+        // Speed up the tile rendering
+        tileView1.setShouldRenderWhilePanning(true);
+        tileView2.setShouldRenderWhilePanning(true);
+        tileView3.setShouldRenderWhilePanning(true);
+        tileView4.setShouldRenderWhilePanning(true);
+        tileView5.setShouldRenderWhilePanning(true);
+        //set the scale for the tileviews
+        tileView1.setScale(0.5f);
+        tileView2.setScale(0.5f);
+        tileView3.setScale(0.5f);
+        tileView4.setScale(0.5f);
+        tileView5.setScale(0.5f);
         // ---------- End of image set-up
 
 
@@ -197,13 +215,13 @@ public class MainActivity extends AppCompatActivity
          *      Pin markers set-up
          * ==========================================
          */
-        ImageView imageView = new ImageView( this );
-        imageView.setImageResource(R.drawable.blue_empty);
-        tileView1.addMarker(imageView, 620, 1815, -0.5f, -1.0f);
-
-        ImageView imageView2 = new ImageView( this );
-        imageView2.setImageResource(R.drawable.red_empty);
-        tileView1.addMarker(imageView2, 1195, 1530, -0.5f, -1.0f);
+//        ImageView imageView = new ImageView( this );
+//        imageView.setImageResource(R.drawable.blue_empty);
+//        tileView1.addMarker(imageView, 620, 1815, -0.5f, -1.0f);
+//
+//        ImageView imageView2 = new ImageView( this );
+//        imageView2.setImageResource(R.drawable.red_empty);
+//        tileView1.addMarker(imageView2, 1195, 1530, -0.5f, -1.0f);
 
         /* ==========================================
          *      TODO
@@ -233,29 +251,25 @@ public class MainActivity extends AppCompatActivity
                         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, metrics)
                 )
         );
+        paint.setColor(0xFF33B5E5);
 
     }
 
-    /*
-        TODO
-        fix search returning incorrect room when names are similar
-        e.g searching using 4501 as destination puts a marker on 4501.4
-     */
     public List<double[]> drawPath (String start, String end)
     {
-        Toast.makeText(MainActivity.this, "Start = " + start + " End = " + end , Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this, "Start = " + start + " End = " + end , Toast.LENGTH_SHORT).show();
         NodePath nPath = new NodePath(this.getApplicationContext());
         String[] startInfo = new String[3];
         String[] endInfo = new String[3];
         List<String[]> floor4Rooms = nPath.parseCSV("floor_4_rooms");
 
         for (String[] curVal : floor4Rooms) {
-            if (curVal[0].contains(start)) {
+            if (curVal[0].equals(start)) {
                 startInfo[0] = curVal[0];
                 startInfo[1] = curVal[1];
                 startInfo[2] = curVal[2];
             }
-            else if (curVal[0].contains(end)) {
+            else if (curVal[0].equals(end)) {
                 endInfo[0] = curVal[0];
                 endInfo[1] = curVal[1];
                 endInfo[2] = curVal[2];
@@ -268,10 +282,15 @@ public class MainActivity extends AppCompatActivity
 
 
         List<double[]> points = new ArrayList<>();
+        List<double[]> result = nPath.generatePath(startPosX, startPosY, endPosX, endPosY);
+        points.add(new double[]{startPosX, startPosY});
+        for (double[] curVal : result)
         {
-            points.add( new double[] {startPosX, startPosY} );
-            points.add(new double[]{endPosX, endPosY});
+            points.add(curVal);
+            Log.e("path points: ", "" + curVal[0] + " " + curVal[1]);
         }
+        points.add(new double[]{endPosX, endPosY});
+
         //points.addAll(nPath.generatePath(startPosX, startPosY, endPosX, endPosY));
 
         return points;
@@ -410,16 +429,31 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private CompositePathView.DrawablePath dp = null;
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode) {
             case ITINERARY_REQUEST:
                 if (resultCode == RESULT_OK) {
+                    if (dp != null) {
+                        tileView4.removePath(dp);
+                    }
+                    tileView4.removeMarker(imageView);
+                    tileView4.removeMarker(imageView2);
+
                     Bundle res = data.getExtras();
                     String location = res.getString("loc");
                     String destination = res.getString("dest");
-                    Log.d( "Result", "location: " + location + " - destination: " + destination );
-                    Toast.makeText(MainActivity.this, "Start = " + location + " ~ End = " + destination , Toast.LENGTH_SHORT).show();
-                    drawPath( location, destination);
+                    Log.d("Result", "location: " + location + " - destination: " + destination);
+                    //Toast.makeText(MainActivity.this, "Start = " + location + " ~ End = " + destination , Toast.LENGTH_SHORT).show();
+                    List<double[]> points = drawPath(location, destination);
+                    dp = tileView4.drawPath(points, tileView1.getDefaultPathPaint());
+
+                    imageView.setImageResource(R.drawable.blue_empty);
+                    tileView4.addMarker(imageView, points.get(0)[0], points.get(0)[1], -0.5f, -1.0f);
+
+                    imageView2.setImageResource(R.drawable.red_empty);
+                    tileView4.addMarker(imageView2, points.get(points.size()-1)[0], points.get(points.size()-1)[1], -0.5f, -1.0f);
                 }
                 break;
         }
